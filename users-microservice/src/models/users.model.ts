@@ -1,8 +1,10 @@
+import { Activity, UsersActivities } from './acitivites.model';
 import { Situation, BabyGender, UserType, privilege } from './../utils/enum';
 import mongoose from 'mongoose';
-export class UserToken {
+export class Token {
   userName: string;
   _id: string;
+  role: string;
   iat: string;
   exp: string;
 }
@@ -50,6 +52,8 @@ export class User {
 
   babyAge: number;
 
+  babyGender: BabyGender;
+
   email: string;
 
   location: string;
@@ -61,6 +65,7 @@ export class User {
   photoProfile: String;
 
   role: UserType;
+  usersActivities: UsersActivities[];
 
   ableToChangePassword: Boolean;
 }

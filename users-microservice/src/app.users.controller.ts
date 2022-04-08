@@ -9,6 +9,8 @@ import {
   CONFIRM_ACCOUNT,
   UPDATE_PASS_DATA,
   INSCRI_ADMIN,
+  GET_ALL_USERS,
+  GET_USER,
 } from './utils/constantes';
 import { Controller, Inject, UnauthorizedException } from '@nestjs/common';
 import { ClientProxy, MessagePattern } from '@nestjs/microservices';
@@ -19,7 +21,6 @@ import {
   inscriptionDto,
 } from './models/users.dto';
 import { User } from './models/users.model';
-import { privilege } from './utils/enum';
 
 @Controller()
 export class UsersController {
@@ -42,14 +43,6 @@ export class UsersController {
   @MessagePattern(INSCRIPTION)
   async signUp(newUser: inscriptionDto) {
     const isAdded = await this.userService.createUser(newUser);
-    return isAdded;
-  }
-  // todo signUp admin Account
-  //![here]
-  //!------------------------------------------[here]
-  @MessagePattern(INSCRI_ADMIN)
-  async signUpAdmin(newUser: adminDto) {
-    const isAdded = await this.userService.createAdmin(newUser);
     return isAdded;
   }
 
@@ -90,7 +83,7 @@ export class UsersController {
       const hasBeenVerified = await this.userService.ProfilVerified(token);
       console.log(hasBeenVerified);
       return hasBeenVerified
-        ? { seccess: true }
+        ? { success: true }
         : { success: false, message: 'Invalid credentials' };
     } catch (e) {
       throw new UnauthorizedException(e);
@@ -101,5 +94,23 @@ export class UsersController {
     return this.userService.updateServices(data.token, {
       password: data.password,
     });
+  }
+
+  // todo signUp admin Account
+
+  @MessagePattern(INSCRI_ADMIN)
+  async signUpAdmin(newUser: adminDto) {
+    const isAdded = await this.userService.createAdmin(newUser);
+    return isAdded;
+  }
+
+  @MessagePattern(GET_ALL_USERS)
+  getallUsers(token: string) {
+    return this.userService.getUsers(token);
+  }
+  //!------------------------------------------[here]
+  @MessagePattern(GET_USER)
+  getUser(data: { _id: string; token: string }) {
+    return this.userService.user_id(data._id, data.token);
   }
 }

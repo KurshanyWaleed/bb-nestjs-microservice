@@ -9,7 +9,7 @@ export const USERS = 'USERS';
 export const FORUM = 'FORUM';
 export const ESPACE = ' ';
 export const GET_ALL_USERS = { cmd: 'getAllUser', role: 'user/admin' };
-
+export const GET_USER = { cmd: 'get_user', role: 'user/admin' };
 export const INSCRI_ADMIN = { cmd: 'inscriptionAdmin', role: 'user' };
 export const INSCRIPTION = { cmd: 'inscription', role: 'user' };
 export const GET_USER_INFO = { cmd: 'getUser', role: 'user' };
@@ -25,3 +25,7 @@ export const CONFIRM_ACCOUNT = { cmd: 'CONFIRM_ACCOUNT', role: 'email' };
 export const BASE_URL_USERS = 'http://localhost:3000/api-gateway/users/';
 export const BASE_URL = 'http://localhost:3000/api-gateway/';
 export const UPDATE_PASS_DATA = { cmd: 'UPDATE_PASS_DATA', role: 'user' };
+export const GET_USERS = {
+  cmd: 'GET_USERS',
+  role: 'user',
+};

@@ -97,7 +97,6 @@ export class UsersController {
     const token = req.headers.authorization.split(ESPACE)[1];
     return this.userServices.updatePassService(token, password);
   }
-  //!------------------------------*[here]*
   //------------------------------------ administartion ------
   @Post('admin/sign-up')
   @UsePipes(ValidationPipe)
@@ -108,9 +107,16 @@ export class UsersController {
     return await this.userServices.createAdmin(newAdmin);
   }
 
-  @Get('admin/sign-up')
+  @Get('admin/all-users')
   async getallUsers(@Req() req: Request) {
     const token = req.headers.authorization.split(ESPACE)[1];
-    return await this.userServices.getAllUsers();
+    return await this.userServices.getAllUsers(token);
+  }
+  //!------------------------------*[here]*
+  @Get('admin/this/user/:id')
+  async getuser(@Param('id') _id: string, @Req() req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+
+    return await this.userServices.getUserById(_id, token);
   }
 }

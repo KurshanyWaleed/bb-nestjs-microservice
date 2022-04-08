@@ -26,6 +26,7 @@ import {
   USERS,
   INSCRI_ADMIN,
   GET_ALL_USERS,
+  GET_USER,
 } from './../utils/constantes';
 
 @Injectable()
@@ -134,7 +135,15 @@ export class UsersService {
     );
   }
   //!------------------------------*[here]*
-  async getAllUsers() {
-    this.service.sendThisDataToMicroService(GET_ALL_USERS, {}, USERS);
+  async getAllUsers(token: string) {
+    return this.service.sendThisDataToMicroService(GET_ALL_USERS, token, USERS);
+  }
+
+  async getUserById(_id: string, token: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_USER,
+      { _id, token },
+      USERS,
+    );
   }
 }

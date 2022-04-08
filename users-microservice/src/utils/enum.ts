@@ -17,6 +17,7 @@ export enum BabyGender {
 export enum privilege {
   ADMIN = 'ADMIN',
   DATA_ANALYSER = 'DATA_ANALYSER',
+  MEMEBER = 'MEMBER',
 }
 
 // registerEnumType(Situation, {

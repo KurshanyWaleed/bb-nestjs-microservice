@@ -1,6 +1,7 @@
-import { Administration } from './models/users.model';
+import { BabyGender } from 'src/utils/enum';
+import { Administration, Token } from './models/users.model';
 import { Activity, UsersActivities } from './models/acitivites.model';
-import { GET_USER_ACITIVITES } from './utils/constantes';
+import { GET_USER_ACITIVITES, ADMIN } from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -16,7 +17,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserToken } from 'src/models/users.model';
+import { User } from 'src/models/users.model';
 
 import {
   adminDto,
@@ -25,6 +26,7 @@ import {
 } from './models/users.dto';
 import { TokenAnalyse } from './analyse.token';
 import { ServiceSender } from './activities.m.service';
+import { privilege } from './utils/enum';
 
 @Injectable()
 export class UsersService {
@@ -44,7 +46,7 @@ export class UsersService {
   async getUserservice(token: string) {
     await this.tokenAnalyser.isValidToken(token);
     const user = this.jwt.decode(token);
-    const usr = user as UserToken;
+    const usr = user as Token;
     return await this.userModel.findById({ _id: usr._id });
   }
   //--------------------------------------1---------
@@ -87,21 +89,55 @@ export class UsersService {
     }
   }
 
-  async getUsers() {
-    return await this.userModel.find();
+  async getUsers(token: string) {
+    const checkedToken = await this.jwt.verify(token);
+    if (checkedToken) {
+      const admin = this.jwt.decode(token);
+      const currentAdmin = admin as Token;
+      if (
+        currentAdmin.role == privilege.ADMIN ||
+        currentAdmin.role == privilege.DATA_ANALYSER
+      ) {
+        return await this.userModel.find();
+      } else {
+        return new UnauthorizedException();
+      }
+    }
+  }
+
+  async adminByuserName(userName: string) {
+    return await this.adminModel.findOne({ userName });
   }
 
   async userByName(userName: string) {
     return await this.userModel.findOne({ userName });
   }
-  async adminByuserName(userName: string) {
-    return await this.adminModel.findOne({ userName });
+  async user_id(_id: string, token: string) {
+    try {
+      const checkedToken = await this.jwt.verify(token);
+      console.log(checkedToken);
+
+      const tokendetails = this.jwt.decode(token);
+      const currentUser = tokendetails as Token;
+      if (
+        currentUser.role == privilege.ADMIN ||
+        currentUser.role == privilege.DATA_ANALYSER ||
+        (currentUser.role == privilege.MEMEBER &&
+          (await this.userModel.findOne({ _id }))._id == _id)
+      ) {
+        return await this.userModel.findOne({ _id });
+      } else {
+        return new UnauthorizedException();
+      }
+    } catch (e) {
+      return new BadRequestException(e);
+    }
   }
   async deleteService(token: any) {
     try {
       await this.jwt.verify(token);
       const userdata = this.jwt.decode(token);
-      const currentUsr = userdata as UserToken;
+      const currentUsr = userdata as Token;
       const data = await this.userModel.findOne({ _id: currentUsr._id });
       if (data._id == currentUsr._id) {
         await this.userModel.deleteOne({ _id: currentUsr._id });
@@ -120,7 +156,7 @@ export class UsersService {
     try {
       await this.jwt.verify(token);
       const userdata = this.jwt.decode(token);
-      const usr = userdata as UserToken;
+      const usr = userdata as Token;
       if (!(attributes.password == undefined)) {
         // if password existe :
         try {
@@ -203,7 +239,8 @@ export class UsersService {
       return new UnauthorizedException();
     }
   }
-  //!------------------------------------------[here]
+  //!------------------------------------------[here]5
+  //todo:------------------------------------------- administration -----------------------------------
   async createAdmin(newAdmin: adminDto) {
     const newUser = await (
       await this.adminModel.create({
