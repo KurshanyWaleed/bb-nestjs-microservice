@@ -16,6 +16,7 @@ import {
   Render,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -24,6 +25,7 @@ import {
   ConfirmEmailToUpadatePasswordDto,
   LogInDto,
 } from './../models/users.dto';
+import { GroupDto } from 'src/models/group.dto';
 
 @Controller('users')
 export class UsersController {
@@ -97,6 +99,15 @@ export class UsersController {
     const token = req.headers.authorization.split(ESPACE)[1];
     return this.userServices.updatePassService(token, password);
   }
+  @Get('join/group/:title')
+  joinGroup(@Param('title') groupTitle: string, @Req() req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    console.log(groupTitle);
+    const requestPayload = { token: token, groupTitle: groupTitle };
+
+    return this.userServices.joinGroup(requestPayload);
+  }
+
   //------------------------------------ administartion ------
   @Post('admin/sign-up')
   @UsePipes(ValidationPipe)
@@ -118,5 +129,17 @@ export class UsersController {
     const token = req.headers.authorization.split(ESPACE)[1];
 
     return await this.userServices.getUserById(_id, token);
+  }
+  @Post('admin/add-new-group')
+  createGroup(@Body() clientInformation: GroupDto, @Req() req: Request) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.creategroup({
+        token,
+        clientInformation,
+      });
+    } catch (e) {
+      return new UnauthorizedException();
+    }
   }
 }

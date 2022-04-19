@@ -1,3 +1,5 @@
+import { TokenAnalyse } from './analyse.token';
+import { privilege } from './utils/enum';
 import {
   UPDATING,
   INSCRIPTION,
@@ -11,6 +13,9 @@ import {
   INSCRI_ADMIN,
   GET_ALL_USERS,
   GET_USER,
+  USER_VERIFY,
+  NEW_GROUP,
+  REQUEST_TO_JOIN_GROUP,
 } from './utils/constantes';
 import { Controller, Inject, UnauthorizedException } from '@nestjs/common';
 import { ClientProxy, MessagePattern } from '@nestjs/microservices';
@@ -112,5 +117,17 @@ export class UsersController {
   @MessagePattern(GET_USER)
   getUser(data: { _id: string; token: string }) {
     return this.userService.user_id(data._id, data.token);
+  }
+  @MessagePattern(NEW_GROUP)
+  async privilegeAlayzer(data: { token: string; clientInformation: any }) {
+    return this.userService.creategroup(data.token, data.clientInformation);
+  }
+  @MessagePattern(REQUEST_TO_JOIN_GROUP)
+  async joinGroupRequest(payload: { token: string; groupTitle: string }) {
+    console.log('huser controller : ' + payload.groupTitle);
+    return this.userService.joinRequestService({
+      token: payload.token,
+      groupTitle: payload.groupTitle,
+    });
   }
 }

@@ -25,7 +25,13 @@ export const CONFIRM_ACCOUNT = { cmd: 'CONFIRM_ACCOUNT', role: 'email' };
 export const BASE_URL_USERS = 'http://localhost:3000/api-gateway/users/';
 export const BASE_URL = 'http://localhost:3000/api-gateway/';
 export const UPDATE_PASS_DATA = { cmd: 'UPDATE_PASS_DATA', role: 'user' };
+export const REQUEST_TO_JOIN_GROUP = {
+  cmd: 'REQUEST_TO_JOIN_GROUP',
+  role: 'user',
+};
 export const GET_USERS = {
   cmd: 'GET_USERS',
   role: 'user',
 };
+export const NEW_GROUP = { cmd: 'ADD_NEW_GROUP', role: 'user/admin' };
+export const USER_VERIFY = { cmd: 'ANALYSER', role: '' };

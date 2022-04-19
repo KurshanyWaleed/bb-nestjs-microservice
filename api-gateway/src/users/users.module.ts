@@ -3,7 +3,7 @@ import { UsersController } from './users.controller';
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersService } from './users.service';
-import { ServiceSender } from 'src/utils/service.sender';
+import { ServiceSender } from 'src/users/service.sender';
 
 @Module({
   imports: [
@@ -12,13 +12,6 @@ import { ServiceSender } from 'src/utils/service.sender';
         name: 'USERS',
         transport: Transport.TCP,
         options: { port: USER_MS_PORT },
-      },
-    ]),
-    ClientsModule.register([
-      {
-        name: 'FORUM',
-        transport: Transport.TCP,
-        options: { port: FORUM_MS_PORT },
       },
     ]),
   ],

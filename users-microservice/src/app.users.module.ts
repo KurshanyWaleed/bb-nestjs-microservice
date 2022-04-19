@@ -11,8 +11,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailService } from './user.mail.config.services';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ServiceSender } from './activities.m.service';
-import { ACTIVITIES_MS_PORT } from './utils/constantes';
+
+import {
+  ACTIVITIES,
+  ACTIVITIES_MS_PORT,
+  FORUM,
+  FORUM_MS_PORT,
+} from './utils/constantes';
+import { ServiceSender } from './service.sender';
 
 @Module({
   imports: [
@@ -51,9 +57,14 @@ import { ACTIVITIES_MS_PORT } from './utils/constantes';
     ]),
     ClientsModule.register([
       {
-        name: 'ACTIVITIES',
+        name: ACTIVITIES,
         transport: Transport.TCP,
         options: { port: ACTIVITIES_MS_PORT },
+      },
+      {
+        name: FORUM,
+        transport: Transport.TCP,
+        options: { port: FORUM_MS_PORT },
       },
     ]),
   ],

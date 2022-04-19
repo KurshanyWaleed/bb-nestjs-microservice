@@ -1,7 +1,16 @@
+import { GroupDto } from './models/group.dto';
 import { BabyGender } from 'src/utils/enum';
 import { Administration, Token } from './models/users.model';
 import { Activity, UsersActivities } from './models/acitivites.model';
-import { GET_USER_ACITIVITES, ADMIN } from './utils/constantes';
+import {
+  GET_USER_ACITIVITES,
+  ADMIN,
+  NEW_GROUP,
+  FORUM,
+  ACTIVITIES,
+  REQUEST_TO_JOIN_GROUP,
+  MEMBER,
+} from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -25,8 +34,9 @@ import {
   inscriptionDto,
 } from './models/users.dto';
 import { TokenAnalyse } from './analyse.token';
-import { ServiceSender } from './activities.m.service';
+
 import { privilege } from './utils/enum';
+import { ServiceSender } from './service.sender';
 
 @Injectable()
 export class UsersService {
@@ -58,10 +68,14 @@ export class UsersService {
         );
       } else {
         this.service
-          .sendThisDataToMicroService(GET_USER_ACITIVITES, {
-            situation: data.situation,
-            babyAge: data.babyAge,
-          })
+          .sendThisDataToMicroService(
+            GET_USER_ACITIVITES,
+            {
+              situation: data.situation,
+              babyAge: data.babyAge,
+            },
+            ACTIVITIES,
+          )
           .subscribe((newdata) => (this.userActivities = newdata));
 
         const newUser = await (
@@ -239,7 +253,6 @@ export class UsersService {
       return new UnauthorizedException();
     }
   }
-  //!------------------------------------------[here]5
   //todo:------------------------------------------- administration -----------------------------------
   async createAdmin(newAdmin: adminDto) {
     const newUser = await (
@@ -253,5 +266,48 @@ export class UsersService {
       })
     ).save();
     return { new_admin: newUser._id };
+  }
+  //!------------------------------------------[here]5
+  async onUserAnalyse(token: string) {
+    try {
+      console.log(token);
+      this.tokenAnalyser.isValidToken(token);
+      const decoded = this.jwt.decode(token);
+
+      const isAdmin = decoded as Token;
+      return isAdmin.role;
+    } catch (e) {
+      return 'error';
+    }
+  }
+  async creategroup(token: string, newGroup: GroupDto) {
+    const previlege = await this.onUserAnalyse(token);
+    if (previlege == ADMIN) {
+      return this.service.sendThisDataToMicroService(
+        NEW_GROUP,
+        newGroup,
+        FORUM,
+      );
+    } else {
+      return { message: 'access_denied' };
+    }
+  }
+  async joinRequestService(payload: { token: string; groupTitle: string }) {
+    const previlege = await this.onUserAnalyse(payload.token);
+    const decoded = this.jwt.decode(payload.token);
+    const user = decoded as Token;
+    const requestPayload = { _id: user._id, groupTitle: payload.groupTitle };
+    console.log('groupe name: ' + requestPayload.groupTitle);
+    console.log('user id : ' + requestPayload._id);
+
+    if (previlege == MEMBER) {
+      return this.service.sendThisDataToMicroService(
+        REQUEST_TO_JOIN_GROUP,
+        requestPayload,
+        FORUM,
+      );
+    } else {
+      return { message: 'please try to sign-in first then try again ' };
+    }
   }
 }

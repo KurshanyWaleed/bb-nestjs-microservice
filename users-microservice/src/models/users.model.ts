@@ -33,6 +33,7 @@ export const UserSchema = new mongoose.Schema(
     photoProfile: { type: String, required: false, default: '' },
     ableToChangePassword: { type: Boolean, default: false },
     role: { type: String, default: UserType.MEMBER, enum: UserType },
+    memberIn: { type: [mongoose.Schema.Types.ObjectId], ref: 'group' },
     usersActivities: {
       type: [{ title: String, activities: [ActivitySchema] }],
       // ref: "Activities",
@@ -63,6 +64,8 @@ export class User {
   verified: Boolean;
 
   photoProfile: String;
+
+  memberIn: string[];
 
   role: UserType;
   usersActivities: UsersActivities[];

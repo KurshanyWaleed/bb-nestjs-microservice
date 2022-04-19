@@ -1,6 +1,6 @@
+import { ServiceSender } from './service.sender';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { adminDto } from './../models/users.dto';
-import { ServiceSender } from './../utils/service.sender';
-import { Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { User } from 'src/models/users.model';
 import { Request } from 'express';
@@ -27,12 +27,16 @@ import {
   INSCRI_ADMIN,
   GET_ALL_USERS,
   GET_USER,
+  NEW_GROUP,
+  FORUM,
+  USER_VERIFY,
+  REQUEST_TO_JOIN_GROUP,
 } from './../utils/constantes';
 
 @Injectable()
 export class UsersService {
+  public access: boolean = false;
   constructor(private readonly service: ServiceSender) {}
-
   GetInfoFromMS() {
     let users = [User];
     return this.service.sendThisDataToMicroService(TESTING, {}, USERS).pipe(
@@ -43,6 +47,13 @@ export class UsersService {
     );
   }
 
+  async joinGroup(payload: { token: string; groupTitle: string }) {
+    return this.service.sendThisDataToMicroService(
+      REQUEST_TO_JOIN_GROUP,
+      payload,
+      USERS,
+    );
+  }
   async createAdmin(user: adminDto) {
     return this.service
       .sendThisDataToMicroService(INSCRI_ADMIN, user, USERS)
@@ -134,7 +145,6 @@ export class UsersService {
       USERS,
     );
   }
-  //!------------------------------*[here]*
   async getAllUsers(token: string) {
     return this.service.sendThisDataToMicroService(GET_ALL_USERS, token, USERS);
   }
@@ -145,5 +155,9 @@ export class UsersService {
       { _id, token },
       USERS,
     );
+  }
+  //!------------------------------*[here]* probleme :'(
+  async creategroup(data: { token: string; clientInformation: any }) {
+    return this.service.sendThisDataToMicroService(NEW_GROUP, data, USERS);
   }
 }
