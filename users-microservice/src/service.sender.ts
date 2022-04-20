@@ -12,7 +12,8 @@ import { ClientProxy } from '@nestjs/microservices/client';
 export class ServiceSender
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  isConnected: boolean;
+  activitiesIsConnected: boolean;
+  forumIsConnected: boolean;
 
   constructor(
     @Inject(ACTIVITIES) private readonly activitiesService: ClientProxy,
@@ -46,14 +47,14 @@ export class ServiceSender
         console.log(
           'API-GATEWAY connected successfully to ACITIVITES-MICROSERVICE 🔗✨',
         );
-        this.isConnected = true;
+        this.activitiesIsConnected = true;
       })
       .catch((e) => {
         new BadGatewayException(e);
         console.info(
           '[WAITING] The remote ACTIVITIES-Microsercice do not response ...🦕🦕 ',
         );
-        this.isConnected = false;
+        this.activitiesIsConnected = false;
       });
     await this.forumService
       .connect()
@@ -61,10 +62,10 @@ export class ServiceSender
         console.log(
           'API-GATEWAY connected successfully to FORUM-MICROSERVICE 🔗✨',
         );
-        this.isConnected = false;
+        this.forumIsConnected = false;
       })
       .catch((e) => {
-        this.isConnected = false;
+        this.forumIsConnected = false;
         new BadGatewayException(e);
         console.info(
           '[WAITING] The remote FORUM-Microsercice do not response ...🦕🦕🦕 ',
@@ -77,6 +78,7 @@ export class ServiceSender
       .connect()
       .then((data) => true)
       .catch((e) => e);
+    this.activitiesIsConnected = false;
   }
   onConnectFromForum() {
     this.activitiesService
@@ -84,5 +86,6 @@ export class ServiceSender
       .connect()
       .then((data) => true)
       .catch((e) => e);
+    this.forumIsConnected = false;
   }
 }

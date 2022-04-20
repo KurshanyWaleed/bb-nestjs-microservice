@@ -18,8 +18,7 @@ export class ActivitiesController {
   }
   @MessagePattern(GET_USER_ACITIVITES)
   async getActivities(data: { situation: situation; babyAge: number }) {
-    console.log(data);
-
+    // this.activityService.sendWeeklyActivities();
     return await this.activityService.getActivitiesService(
       data.situation,
       data.babyAge,

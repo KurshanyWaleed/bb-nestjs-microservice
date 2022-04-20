@@ -16,6 +16,7 @@ import {
   USER_VERIFY,
   NEW_GROUP,
   REQUEST_TO_JOIN_GROUP,
+  GET_PERMISSION,
 } from './utils/constantes';
 import { Controller, Inject, UnauthorizedException } from '@nestjs/common';
 import { ClientProxy, MessagePattern } from '@nestjs/microservices';
@@ -69,15 +70,22 @@ export class UsersController {
   }
   //todo :refresh token
   @MessagePattern(REFRESH_TOKEN)
-  refreshToken(token: string) {
-    return this.userService.refreshTokenService(token);
+  async refreshToken(token: string) {
+    return await this.userService.refreshTokenService(token);
+  }
+
+  //todo :refresh permission
+  @MessagePattern(GET_PERMISSION)
+  async refreshPermission(token: string) {
+    console.log(await this.userService.refreshPermissionService(token));
+    return await this.userService.refreshPermissionService(token);
   }
   //todo :update password
   @MessagePattern(UPDATE_PASS)
-  updatepass(email: ConfirmEmailToUpadatePasswordDto) {
-    return this.userService.changePassService(email);
+  async updatepass(email: ConfirmEmailToUpadatePasswordDto) {
+    return await this.userService.changePassService(email);
   }
-  //todo : update password permission
+  //todo : update password permission action : email
   @MessagePattern(UPERMESSION)
   getPermission(token: string) {
     return this.userService.getPermissionService(token);

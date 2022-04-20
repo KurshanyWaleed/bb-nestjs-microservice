@@ -6,7 +6,7 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices/client';
-import { USERS, FORUM } from '../utils/constantes';
+import { USERS } from '../utils/constantes';
 
 @Injectable()
 export class ServiceSender

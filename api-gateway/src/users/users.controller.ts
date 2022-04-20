@@ -58,7 +58,8 @@ export class UsersController {
 
   @Get(':token/refresh')
   refresh(@Param('token') token: string) {
-    return this.userServices.refreshServices(token);
+    console.log(token);
+    return this.userServices.refreshPermission(token);
   }
 
   @Post('/forgetPassword')

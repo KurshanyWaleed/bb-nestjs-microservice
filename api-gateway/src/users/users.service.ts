@@ -31,6 +31,7 @@ import {
   FORUM,
   USER_VERIFY,
   REQUEST_TO_JOIN_GROUP,
+  GET_PERMISSION,
 } from './../utils/constantes';
 
 @Injectable()
@@ -113,6 +114,13 @@ export class UsersService {
           return user;
         }),
       );
+  }
+  refreshPermission(token: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_PERMISSION,
+      token,
+      USERS,
+    );
   }
   refreshServices(token: string) {
     return this.service.sendThisDataToMicroService(REFRESH_TOKEN, token, USERS);

@@ -200,6 +200,7 @@ export const emailTemplateConfirmEmail = (token: string) => `
 </body>
 
 </html>`;
+
 export const emailTemplateConfirmAcount = (token: string) => `
 <html>
 
@@ -343,7 +344,7 @@ export const emailTemplateConfirmAcount = (token: string) => `
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 3px;" bgcolor="#eb71ac"><a href="${BASE_URL}/users/confirm/${token}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;">Confirm Email</a></td>
+                                                <td align="center" style="border-radius: 3px;" bgcolor="#eb71ac"><a href="http://801d-41-231-114-102.ngrok.io/api-gateway/users/confirm/${token}" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #FFA73B; display: inline-block;">Confirm Email</a></td>
                                             </tr>
                                         </table>
                                     </td>

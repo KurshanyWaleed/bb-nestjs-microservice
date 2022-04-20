@@ -10,9 +10,13 @@ import {
   BeforeBorn,
   BEFORE_BORN_ACTIVITIES_SCHEMA,
 } from './model';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { USERS, USERS_MS_PORT } from 'src/constantes';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
@@ -25,6 +29,13 @@ import {
       {
         name: BeforeBorn.name,
         schema: BEFORE_BORN_ACTIVITIES_SCHEMA,
+      },
+    ]),
+    ClientsModule.register([
+      {
+        name: USERS,
+        transport: Transport.TCP,
+        options: { port: USERS_MS_PORT },
       },
     ]),
   ],

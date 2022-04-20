@@ -11,14 +11,17 @@ export const ADMIN = 'ADMIN';
 export const ACTIVITIES = 'ACTIVITIES';
 
 export const INSCRI_ADMIN = { cmd: 'inscriptionAdmin', role: 'user' };
-export const BASE_URL = 'http://localhost:3000/api-gateway';
-export const BASE_URL_USER = 'http://localhost:3000/api-gateway/users';
+export const BASE_URL = 'http://801d-41-231-114-102.ngrok.io/api-gateway';
+export const BASE_URL_USER =
+  'http://801d-41-231-114-102.ngrok.io/api-gateway/users';
 export const ESPACE = ' ';
 
 export const REQUEST_TO_JOIN_GROUP = {
   cmd: 'REQUEST_TO_JOIN_GROUP',
   role: 'user',
 };
+export const GET_PERMISSION = { cmd: 'get_permission', role: 'user' };
+
 export const GET_USER = { cmd: 'get_user', role: 'user/admin' };
 export const INSCRIPTION = { cmd: 'inscription', role: 'user' };
 export const GET_ALL_USERS = { cmd: 'getAllUser', role: 'user/admin' };

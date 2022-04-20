@@ -1,10 +1,12 @@
+import { USERS } from './../constantes';
+import { ClientProxy } from '@nestjs/microservices/client';
 import { situation } from 'enum';
 import { Model } from 'mongoose';
 /*
 https://docs.nestjs.com/providers#services
 */
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ActivityDTO, AfterBorn, BeforeBorn } from './model';
 import { ESPACE } from 'src/constantes';
@@ -12,6 +14,7 @@ import { ESPACE } from 'src/constantes';
 @Injectable()
 export class ActivitiesService {
   constructor(
+    @Inject(USERS) private readonly userservice: ClientProxy,
     @InjectModel(BeforeBorn.name)
     private readonly ActivityBBModel: Model<BeforeBorn>,
     @InjectModel(AfterBorn.name)
@@ -70,15 +73,15 @@ export class ActivitiesService {
     if (sit == situation.EXPECTANT_NEW_BABY) {
       return (await this.ActivityBBModel.find({})).filter(
         (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
-      );
+      )[0];
     } else if (sit == situation.PERENT) {
       return (await this.ActivityABModel.find({})).filter(
         (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
-      );
+      )[0];
     } else if (sit == situation.PARENT_AND_EXPECTANT_NEW_BABY) {
       return (await this.ActivityBBModel.find({})).filter(
         (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
-      );
+      )[0];
     }
   }
 }

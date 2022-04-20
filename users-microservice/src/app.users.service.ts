@@ -62,7 +62,7 @@ export class UsersService {
   //--------------------------------------1---------
   async createUser(data: inscriptionDto) {
     try {
-      if (!this.service.isConnected) {
+      if (!this.service.activitiesIsConnected) {
         return new BadGatewayException(
           'The remote server is not in service 🦕 ',
         );
@@ -221,6 +221,22 @@ export class UsersService {
       return { message: 'Invalid token !' };
     }
   }
+  //!------------------------------------------[here]5
+  //todo :refresh permission
+  async refreshPermissionService(token: string) {
+    console.log(token);
+    const user = this.jwt.decode(token) as Token;
+    const persistenceUser = await this.userModel.findOne({ _id: user._id });
+    if (persistenceUser.ableToChangePassword == true) {
+      return {
+        permission: true,
+      };
+    } else
+      return {
+        permission: false,
+      };
+  }
+
   async changePassService(inputEmail: ConfirmEmailToUpadatePasswordDto) {
     const user = await this.userModel.findOne({ email: inputEmail.email });
     if (user) {
@@ -234,7 +250,7 @@ export class UsersService {
       );
       return { permissionToken: token };
     } else {
-      throw new NotFoundException(
+      return new NotFoundException(
         `This Email ${inputEmail.email} does not exist ! `,
       );
     }
@@ -267,7 +283,6 @@ export class UsersService {
     ).save();
     return { new_admin: newUser._id };
   }
-  //!------------------------------------------[here]5
   async onUserAnalyse(token: string) {
     try {
       console.log(token);
@@ -297,9 +312,6 @@ export class UsersService {
     const decoded = this.jwt.decode(payload.token);
     const user = decoded as Token;
     const requestPayload = { _id: user._id, groupTitle: payload.groupTitle };
-    console.log('groupe name: ' + requestPayload.groupTitle);
-    console.log('user id : ' + requestPayload._id);
-
     if (previlege == MEMBER) {
       return this.service.sendThisDataToMicroService(
         REQUEST_TO_JOIN_GROUP,
@@ -307,7 +319,7 @@ export class UsersService {
         FORUM,
       );
     } else {
-      return { message: 'please try to sign-in first then try again ' };
+      return { message: 'Please try to sign-in first then try again ' };
     }
   }
 }
