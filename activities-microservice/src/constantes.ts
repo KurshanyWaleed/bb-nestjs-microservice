@@ -12,3 +12,4 @@ export const API_GATEWAY_SERVER = 3000;
 export const ESPACE = ' ';
 export const USERS = 'USERS';
 export const ACTIVITIES_OF_WEEK = 'ACTIVITIES_OF_WEEK';
+export const GET_ACTIVITIES_OF_WEEK = { cmd: 'GET_ACTIVITIES_OF_WEEK' };

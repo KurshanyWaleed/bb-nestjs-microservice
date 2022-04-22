@@ -1,3 +1,4 @@
+import { Length } from 'class-validator';
 import { GroupDto } from './models/group.dto';
 import { BabyGender } from 'src/utils/enum';
 import { Administration, Token } from './models/users.model';
@@ -10,6 +11,8 @@ import {
   ACTIVITIES,
   REQUEST_TO_JOIN_GROUP,
   MEMBER,
+  ESPACE,
+  GET_ACTIVITIES_OF_WEEK,
 } from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
@@ -22,6 +25,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -41,6 +45,8 @@ import { ServiceSender } from './service.sender';
 @Injectable()
 export class UsersService {
   userActivities: Activity[] = [];
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
     @InjectModel(Administration.name)
@@ -53,6 +59,39 @@ export class UsersService {
   ) {}
 
   //--------------------------------------begin---------
+  async activitiesOfWeekService(payload: any) {
+    this.logger.verbose('----------------------------------------');
+    const users = await this.userModel.find();
+    users.forEach((user) => {
+      this.service
+        .sendThisDataToMicroService(
+          GET_ACTIVITIES_OF_WEEK,
+
+          {
+            last_week_activities:
+              user.usersActivities[user.usersActivities.length - 1].title.split(
+                ESPACE,
+              )[1],
+            user_situation: user.situation,
+          },
+          // { message: 'user activities is empty ' },
+          ACTIVITIES,
+        )
+        .subscribe(async (data) => {
+          this.logger.debug(data.map((activities) => activities.title));
+          await this.userModel.updateOne(
+            { _id: user._id },
+            {
+              $push: {
+                usersActivities: data,
+              },
+            },
+          );
+          // // return currentUser;
+        });
+    });
+  }
+
   async getUserservice(token: string) {
     await this.tokenAnalyser.isValidToken(token);
     const user = this.jwt.decode(token);
@@ -121,6 +160,26 @@ export class UsersService {
 
   async adminByuserName(userName: string) {
     return await this.adminModel.findOne({ userName });
+  }
+
+  async userByToken(token: string) {
+    try {
+      this.tokenAnalyser.isValidToken(token);
+      const currentUser = this.jwt.decode(token) as Token;
+      const { userName, location, situation, babyAge, babyGender } =
+        await this.userModel.findOne({ _id: currentUser._id });
+      return {
+        userName,
+        location,
+        situation,
+        babyAge,
+        babyGender,
+      };
+    } catch (e) {
+      return {
+        error: e,
+      };
+    }
   }
 
   async userByName(userName: string) {

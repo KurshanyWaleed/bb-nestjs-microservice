@@ -19,9 +19,11 @@ import {
   FORUM_MS_PORT,
 } from './utils/constantes';
 import { ServiceSender } from './service.sender';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     forwardRef(() => AuthModule),
     MailerModule.forRootAsync({

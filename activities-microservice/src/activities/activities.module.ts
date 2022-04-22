@@ -1,3 +1,4 @@
+import { CronService } from './cron.service';
 import { ActivitiesService } from './activities.service';
 import { ActivitiesController } from './activities.controller';
 
@@ -40,6 +41,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     ]),
   ],
   controllers: [ActivitiesController],
-  providers: [ActivitiesService],
+  providers: [ActivitiesService, CronService],
 })
 export class ActivitiesModule {}

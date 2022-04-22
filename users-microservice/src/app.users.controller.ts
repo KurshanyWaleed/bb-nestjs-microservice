@@ -12,11 +12,12 @@ import {
   UPDATE_PASS_DATA,
   INSCRI_ADMIN,
   GET_ALL_USERS,
-  GET_USER,
-  USER_VERIFY,
   NEW_GROUP,
   REQUEST_TO_JOIN_GROUP,
   GET_PERMISSION,
+  GET_USER_INFO,
+  GET_ME,
+  ACTIVITIES_OF_WEEK,
 } from './utils/constantes';
 import { Controller, Inject, UnauthorizedException } from '@nestjs/common';
 import { ClientProxy, MessagePattern } from '@nestjs/microservices';
@@ -26,7 +27,8 @@ import {
   ConfirmEmailToUpadatePasswordDto,
   inscriptionDto,
 } from './models/users.dto';
-import { User } from './models/users.model';
+import { User, Token } from './models/users.model';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller()
 export class UsersController {
@@ -90,6 +92,13 @@ export class UsersController {
   getPermission(token: string) {
     return this.userService.getPermissionService(token);
   }
+  //!-----------------------------------------------
+  // todo : sending activities of the week
+  //@MessagePattern(ACTIVITIES_OF_WEEK)
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  async activitiesOfWeek(payload: any) {
+    return await this.userService.activitiesOfWeekService(payload);
+  }
   @MessagePattern(CONFIRM_ACCOUNT)
   async confirmAccount(token: string) {
     try {
@@ -122,7 +131,11 @@ export class UsersController {
     return this.userService.getUsers(token);
   }
   //!------------------------------------------[here]
-  @MessagePattern(GET_USER)
+  @MessagePattern(GET_ME)
+  getMe(token: string) {
+    return this.userService.userByToken(token);
+  }
+  @MessagePattern(GET_USER_INFO)
   getUser(data: { _id: string; token: string }) {
     return this.userService.user_id(data._id, data.token);
   }

@@ -1,3 +1,5 @@
+import { Situation } from './enum';
+import { CronService } from './cron.service';
 import { USERS } from './../constantes';
 import { ClientProxy } from '@nestjs/microservices/client';
 import { situation } from 'enum';
@@ -8,18 +10,21 @@ https://docs.nestjs.com/providers#services
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ActivityDTO, AfterBorn, BeforeBorn } from './model';
+import { ActivityDTO, AfterBorn, BeforeBorn, WeekActivitiesDto } from './model';
 import { ESPACE } from 'src/constantes';
 
 @Injectable()
 export class ActivitiesService {
   constructor(
     @Inject(USERS) private readonly userservice: ClientProxy,
+    private readonly cron: CronService,
     @InjectModel(BeforeBorn.name)
     private readonly ActivityBBModel: Model<BeforeBorn>,
     @InjectModel(AfterBorn.name)
     private readonly ActivityABModel: Model<AfterBorn>,
-  ) {}
+  ) {
+    this.cron.createNewCrone('test');
+  }
   async createActivityService(week: ActivityDTO, type: string) {
     try {
       switch (type) {
@@ -69,8 +74,25 @@ export class ActivitiesService {
       return new BadRequestException(e);
     }
   }
+
   async getActivitiesService(sit: situation, babyAge: number) {
     if (sit == situation.EXPECTANT_NEW_BABY) {
+      console.log(
+        'passed here' +
+          sit +
+          (await this.ActivityBBModel.find({})).filter(
+            (week) =>
+              Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
+          )[2].title,
+        // );
+        // await this.cron.createNewCrone(
+        //   'atctivities',
+        //   (
+        //     await this.ActivityBBModel.find({})
+        //   ).filter(
+        //     (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
+        //   )[2],
+      );
       return (await this.ActivityBBModel.find({})).filter(
         (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
       )[0];
@@ -82,6 +104,28 @@ export class ActivitiesService {
       return (await this.ActivityBBModel.find({})).filter(
         (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
       )[0];
+    }
+  }
+  async handelIncomminData(payload: WeekActivitiesDto) {
+    switch (payload.user_situation) {
+      case Situation.EXPECTANT_NEW_BABY:
+        return (await this.ActivityBBModel.find()).filter(
+          (week) =>
+            Number(week.title.split(ESPACE)[1]) ==
+            Number(payload.last_week_activities) + 1,
+        );
+      case Situation.PARENT_AND_EXPECTANT_NEW_BABY:
+        return (await this.ActivityBBModel.find()).filter(
+          (week) =>
+            Number(week.title.split(ESPACE)[1]) ==
+            Number(payload.last_week_activities) + 1,
+        );
+      case Situation.PERENT:
+        return (await this.ActivityABModel.find()).filter(
+          (week) =>
+            Number(week.title.split(ESPACE)[1]) ==
+            Number(payload.last_week_activities) + 1,
+        );
     }
   }
 }

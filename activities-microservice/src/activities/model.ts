@@ -17,6 +17,10 @@ export const BEFORE_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   },
   { timestamps: true },
 );
+export class WeekActivitiesDto {
+  last_week_activities: string;
+  user_situation: string;
+}
 
 export class AfterBorn {
   _id: string;

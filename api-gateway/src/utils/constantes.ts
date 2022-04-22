@@ -24,9 +24,13 @@ export const GET_PERMISSION = { cmd: 'get_permission', role: 'user' };
 export const UPDATE_PASS = { cmd: 'UPDATE_PASS', role: 'user' };
 export const UPERMESSION = { cmd: 'UPDATE_PERMISSION', role: 'email' };
 export const CONFIRM_ACCOUNT = { cmd: 'CONFIRM_ACCOUNT', role: 'email' };
-export const BASE_URL_USERS =
+export const GET_ME = { cmd: 'getMe', role: 'user' };
+
+export const local_BASE_URL_USERS = 'http://localhost:3000/api-gateway/users/';
+
+export const ng_BASE_URL_USERS =
   'http://801d-41-231-114-102.ngrok.io/api-gateway/users/';
-export const BASE_URL = 'http://801d-41-231-114-102.ngrok.io/api-gateway/';
+export const ng_BASE_URL = 'http://801d-41-231-114-102.ngrok.io/api-gateway/';
 export const UPDATE_PASS_DATA = { cmd: 'UPDATE_PASS_DATA', role: 'user' };
 export const REQUEST_TO_JOIN_GROUP = {
   cmd: 'REQUEST_TO_JOIN_GROUP',

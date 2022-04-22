@@ -32,6 +32,7 @@ import {
   USER_VERIFY,
   REQUEST_TO_JOIN_GROUP,
   GET_PERMISSION,
+  GET_ME,
 } from './../utils/constantes';
 
 @Injectable()
@@ -83,7 +84,8 @@ export class UsersService {
   }
   async getUserInformationService(req: Request) {
     const token = req.headers.authorization.split(ESPACE)[1];
-    return this.service.sendThisDataToMicroService(GET_USER_INFO, token, USERS);
+    console.log(token);
+    return this.service.sendThisDataToMicroService(GET_ME, token, USERS);
   }
 
   signInservice(data: LogInDto) {
@@ -122,7 +124,8 @@ export class UsersService {
       USERS,
     );
   }
-  refreshServices(token: string) {
+  //!-----------------------------------
+  refreshTokenServices(token: string) {
     return this.service.sendThisDataToMicroService(REFRESH_TOKEN, token, USERS);
   }
   changePassService(inputEmail: ConfirmEmailToUpadatePasswordDto) {
