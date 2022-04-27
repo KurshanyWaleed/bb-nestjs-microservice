@@ -83,15 +83,7 @@ export class ActivitiesService {
           (await this.ActivityBBModel.find({})).filter(
             (week) =>
               Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
-          )[2].title,
-        // );
-        // await this.cron.createNewCrone(
-        //   'atctivities',
-        //   (
-        //     await this.ActivityBBModel.find({})
-        //   ).filter(
-        //     (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
-        //   )[2],
+          )[0],
       );
       return (await this.ActivityBBModel.find({})).filter(
         (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),

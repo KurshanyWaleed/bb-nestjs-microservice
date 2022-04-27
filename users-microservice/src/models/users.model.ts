@@ -32,6 +32,7 @@ export const UserSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     photoProfile: { type: String, required: false, default: '' },
     ableToChangePassword: { type: Boolean, default: false },
+    cronDay: { type: String, required: true },
     role: { type: String, default: UserType.MEMBER, enum: UserType },
     memberIn: { type: [mongoose.Schema.Types.ObjectId], ref: 'group' },
     usersActivities: {
@@ -71,6 +72,8 @@ export class User {
   usersActivities: UsersActivities[];
 
   ableToChangePassword: Boolean;
+
+  cronDay: string;
 }
 export const AdministrationSchema = new mongoose.Schema(
   {

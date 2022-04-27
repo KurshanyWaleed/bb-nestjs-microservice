@@ -47,6 +47,10 @@ export class UsersController {
   getUserInformation(@Req() req: Request) {
     return this.userServices.getUserInformationService(req);
   }
+  @Get('list-activities')
+  getUserActivities(@Req() req: Request) {
+    return this.userServices.getUserActivitiesService(req);
+  }
   //todo  : ------Update User Infos-----------------------------*->
   @Put('update')
   @UseGuards(JwtAuthGuard)
@@ -77,7 +81,7 @@ export class UsersController {
   //todo  : ------Enter new Password-----------------------------*->
 
   @Put('new-password')
-  newPass(password: string, @Req() req: Request) {
+  newPass(@Body() password: string, @Req() req: Request) {
     const token = req.headers.authorization.split(ESPACE)[1];
     return this.userServices.updatePassService(token, password);
   }

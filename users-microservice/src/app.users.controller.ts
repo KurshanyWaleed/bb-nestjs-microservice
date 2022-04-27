@@ -18,6 +18,8 @@ import {
   GET_USER_INFO,
   GET_ME,
   ACTIVITIES_OF_WEEK,
+  GET_MY_ACTIVITIES,
+  ESPACE,
 } from './utils/constantes';
 import { Controller, Inject, UnauthorizedException } from '@nestjs/common';
 import { ClientProxy, MessagePattern } from '@nestjs/microservices';
@@ -27,8 +29,7 @@ import {
   ConfirmEmailToUpadatePasswordDto,
   inscriptionDto,
 } from './models/users.dto';
-import { User, Token } from './models/users.model';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { User } from './models/users.model';
 
 @Controller()
 export class UsersController {
@@ -95,15 +96,13 @@ export class UsersController {
   //!-----------------------------------------------
   // todo : sending activities of the week
   //@MessagePattern(ACTIVITIES_OF_WEEK)
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  async activitiesOfWeek(payload: any) {
-    return await this.userService.activitiesOfWeekService(payload);
-  }
+
+  //************************************************************************* */
   @MessagePattern(CONFIRM_ACCOUNT)
   async confirmAccount(token: string) {
     try {
       const hasBeenVerified = await this.userService.ProfilVerified(token);
-      console.log(hasBeenVerified);
+
       return hasBeenVerified
         ? { success: true }
         : { success: false, message: 'Invalid credentials' };
@@ -111,11 +110,12 @@ export class UsersController {
       throw new UnauthorizedException(e);
     }
   }
+  6;
+
   @MessagePattern(UPDATE_PASS_DATA)
   updatepasswordforgetten(data: { token: string; password: string }) {
-    return this.userService.updateServices(data.token, {
-      password: data.password,
-    });
+    console.log(data);
+    return this.userService.updateServices(data.token, data.password);
   }
 
   // todo signUp admin Account
@@ -135,6 +135,11 @@ export class UsersController {
   getMe(token: string) {
     return this.userService.userByToken(token);
   }
+  @MessagePattern(GET_MY_ACTIVITIES)
+  getMyActivities(token: string) {
+    return this.userService.activitiesByToken(token);
+  }
+
   @MessagePattern(GET_USER_INFO)
   getUser(data: { _id: string; token: string }) {
     return this.userService.user_id(data._id, data.token);
@@ -151,4 +156,9 @@ export class UsersController {
       groupTitle: payload.groupTitle,
     });
   }
+  //********************************************************************* */
+  // @Cron(CronExpression.EVERY_WEEK)
+  // async activitiesOfWeek() {
+  //   return await this.userService.activitiesOfWeekService();
+  // }
 }

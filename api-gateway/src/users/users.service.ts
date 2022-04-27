@@ -28,11 +28,10 @@ import {
   GET_ALL_USERS,
   GET_USER,
   NEW_GROUP,
-  FORUM,
-  USER_VERIFY,
   REQUEST_TO_JOIN_GROUP,
   GET_PERMISSION,
   GET_ME,
+  GET_MY_ACTIVITIES,
 } from './../utils/constantes';
 
 @Injectable()
@@ -88,6 +87,16 @@ export class UsersService {
     return this.service.sendThisDataToMicroService(GET_ME, token, USERS);
   }
 
+  async getUserActivitiesService(req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    console.log(token);
+    return this.service.sendThisDataToMicroService(
+      GET_MY_ACTIVITIES,
+      token,
+      USERS,
+    );
+  }
+
   signInservice(data: LogInDto) {
     console.log(data);
     return this.service.sendThisDataToMicroService(LOGIN, data, USERS);
@@ -138,14 +147,14 @@ export class UsersService {
   updateAttributeService(token: string, data: any) {
     return this.service.sendThisDataToMicroService(UPERMESSION, token, USERS);
   }
-  updatePassService(token: string, data: any) {
-    data = {
+  updatePassService(token: string, password: any) {
+    const payload = {
       token,
-      password: data,
+      password: password,
     };
     return this.service.sendThisDataToMicroService(
       UPDATE_PASS_DATA,
-      data,
+      payload,
       USERS,
     );
   }

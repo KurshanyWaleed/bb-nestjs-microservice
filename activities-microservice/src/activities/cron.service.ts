@@ -37,5 +37,4 @@ export class CronService {
     job.stop();
     this.logger.debug(`${cronName} has been killed`);
   }
-  sendWeeklyActiviites() {}
 }

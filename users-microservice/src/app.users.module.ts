@@ -20,9 +20,11 @@ import {
 } from './utils/constantes';
 import { ServiceSender } from './service.sender';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     forwardRef(() => AuthModule),

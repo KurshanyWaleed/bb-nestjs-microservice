@@ -41,6 +41,9 @@ import { TokenAnalyse } from './analyse.token';
 
 import { privilege } from './utils/enum';
 import { ServiceSender } from './service.sender';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
 
 @Injectable()
 export class UsersService {
@@ -51,17 +54,19 @@ export class UsersService {
     @InjectModel('User') private readonly userModel: Model<User>,
     @InjectModel(Administration.name)
     private readonly adminModel: Model<Administration>,
+    private schedulerRegistry: SchedulerRegistry,
     private readonly config: ConfigService,
     private readonly tokenAnalyser: TokenAnalyse,
     private readonly jwt: JwtService,
     private readonly emailService: EmailService,
     private readonly service: ServiceSender,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   //--------------------------------------begin---------
-  async activitiesOfWeekService(payload: any) {
+  async activitiesOfWeekService(payload?: string) {
     this.logger.verbose('----------------------------------------');
-    const users = await this.userModel.find();
+    const users = await this.userModel.find({ cronDay: payload });
     users.forEach((user) => {
       this.service
         .sendThisDataToMicroService(
@@ -101,6 +106,8 @@ export class UsersService {
   //--------------------------------------1---------
   async createUser(data: inscriptionDto) {
     try {
+      const corns = this.schedulerRegistry.getCronJobs();
+      console.log(corns);
       if (!this.service.activitiesIsConnected) {
         return new BadGatewayException(
           'The remote server is not in service 🦕 ',
@@ -122,8 +129,10 @@ export class UsersService {
             ...data,
             situation: data.situation,
             babyAge: data.babyAge,
+            cronDay: Date().split(ESPACE)[0],
             password: await bcrypt.hash(
               data.password,
+
               parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
             ),
             usersActivities: this.userActivities,
@@ -161,7 +170,22 @@ export class UsersService {
   async adminByuserName(userName: string) {
     return await this.adminModel.findOne({ userName });
   }
-
+  async activitiesByToken(token: string) {
+    try {
+      this.tokenAnalyser.isValidToken(token);
+      const currentUser = this.jwt.decode(token) as Token;
+      const { usersActivities } = await this.userModel.findOne({
+        _id: currentUser._id,
+      });
+      return {
+        usersActivities,
+      };
+    } catch (e) {
+      return {
+        error: e,
+      };
+    }
+  }
   async userByToken(token: string) {
     try {
       this.tokenAnalyser.isValidToken(token);
@@ -188,7 +212,6 @@ export class UsersService {
   async user_id(_id: string, token: string) {
     try {
       const checkedToken = await this.jwt.verify(token);
-      console.log(checkedToken);
 
       const tokendetails = this.jwt.decode(token);
       const currentUser = tokendetails as Token;
@@ -225,7 +248,6 @@ export class UsersService {
     }
   }
   async updateServices(token: string, attributes: any) {
-    console.log(attributes);
     try {
       await this.jwt.verify(token);
       const userdata = this.jwt.decode(token);
@@ -239,6 +261,7 @@ export class UsersService {
               { _id: usr._id },
               {
                 ...attributes,
+                ableToChangePassword: false,
                 password: await bcrypt.hash(
                   attributes.password,
                   parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
@@ -247,9 +270,7 @@ export class UsersService {
             );
             return { success: true };
           } else {
-            return {
-              message: 'Permission Denied ',
-            };
+            return new UnauthorizedException('Permission Denied');
           }
         } catch (e) {
           return new ConflictException(
@@ -257,9 +278,6 @@ export class UsersService {
           );
         }
       } else {
-        console.log('here is it ');
-        console.log(attributes);
-        console.log(usr);
         await this.userModel.findOneAndUpdate({ _id: usr._id }, attributes);
         return { success: true };
       }
@@ -283,7 +301,6 @@ export class UsersService {
   //!------------------------------------------[here]5
   //todo :refresh permission
   async refreshPermissionService(token: string) {
-    console.log(token);
     const user = this.jwt.decode(token) as Token;
     const persistenceUser = await this.userModel.findOne({ _id: user._id });
     if (persistenceUser.ableToChangePassword == true) {
@@ -344,7 +361,6 @@ export class UsersService {
   }
   async onUserAnalyse(token: string) {
     try {
-      console.log(token);
       this.tokenAnalyser.isValidToken(token);
       const decoded = this.jwt.decode(token);
 

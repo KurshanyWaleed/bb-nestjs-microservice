@@ -9,17 +9,18 @@ export const MEMBER = 'MEMBER';
 export const FORUM = 'FORUM';
 export const ADMIN = 'ADMIN';
 export const ACTIVITIES = 'ACTIVITIES';
-export const local_BASE_URL_USERS = 'http://localhost:3000/api-gateway/users/';
-export const INSCRI_ADMIN = { cmd: 'inscriptionAdmin', role: 'user' };
-export const BASE_URL = 'http://801d-41-231-114-102.ngrok.io/api-gateway';
-export const BASE_URL_USER =
-  'http://801d-41-231-114-102.ngrok.io/api-gateway/users';
+
+export const local_BASE_URL_USERS = 'http://localhost:3000/api-gateway/users';
+export const LOCAL_BASE_URL = 'http://localhost:3000/api-gateway';
+
 export const ESPACE = ' ';
 
+export const INSCRI_ADMIN = { cmd: 'inscriptionAdmin', role: 'user' };
 export const REQUEST_TO_JOIN_GROUP = {
   cmd: 'REQUEST_TO_JOIN_GROUP',
   role: 'user',
 };
+export const GET_MY_ACTIVITIES = { cmd: 'getMyActivitieis', role: 'user' };
 export const GET_PERMISSION = { cmd: 'get_permission', role: 'user' };
 export const GET_ACTIVITIES_OF_WEEK = { cmd: 'GET_ACTIVITIES_OF_WEEK' };
 export const INSCRIPTION = { cmd: 'inscription', role: 'user' };
