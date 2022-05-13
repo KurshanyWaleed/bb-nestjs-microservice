@@ -21,6 +21,7 @@ import {
   ACTIVITIES_OF_WEEK,
   GET_MY_ACTIVITIES,
   ESPACE,
+  NEW_ACTIVITY,
 } from './utils/constantes';
 import {
   Controller,
@@ -155,6 +156,11 @@ export class UsersController {
   @MessagePattern(GET_USER_INFO)
   getUser(data: { _id: string; token: string }) {
     return this.userService.user_id(data._id, data.token);
+  }
+  //---------------------------------------admin
+  @MessagePattern(NEW_ACTIVITY)
+  async createActivity(data: { token: string; clientInformation: any }) {
+    return this.userService.creategroup(data.token, data.clientInformation);
   }
   @MessagePattern(NEW_GROUP)
   async privilegeAlayzer(data: { token: string; clientInformation: any }) {

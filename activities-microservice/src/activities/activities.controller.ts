@@ -1,4 +1,4 @@
-import { GET_ACTIVITIES_OF_WEEK } from './../constantes';
+import { CREATE_ACTIVITIES, GET_ACTIVITIES_OF_WEEK } from './../constantes';
 import { CronService } from './cron.service';
 import { ActivitiesService } from './activities.service';
 /*
@@ -9,7 +9,7 @@ import { Body, Controller, Param, Post, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { situation } from 'enum';
 import { GET_USER_ACITIVITES } from '../constantes';
-import { ActivityDTO, WeekActivitiesDto } from './model';
+import { CreateActivityDTO, WeekActivitiesDto } from './model';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -19,9 +19,14 @@ export class ActivitiesController {
     private readonly activityService: ActivitiesService,
     private readonly cron: CronService,
   ) {}
-  @Post('add-New-Activity/:type')
-  createActivity(@Body() body: ActivityDTO, @Param('type') type: string) {
-    return this.activityService.createActivityService(body, type);
+  // @Post('add-New-Activity/:type')
+  // createActivity(@Body() body: ActivityDTO, @Param('type') type: string) {
+  //   return this.activityService.createActivityService(body, type);
+  // }
+
+  @MessagePattern(CREATE_ACTIVITIES)
+  adminCreateActivity(@Body() body: CreateActivityDTO) {
+    return this.activityService.adminCreateActivityService(body);
   }
 
   @MessagePattern(GET_USER_ACITIVITES)

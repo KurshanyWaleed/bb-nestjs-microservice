@@ -3,3 +3,8 @@ export enum Situation {
   PERENT = 'PERENT',
   PARENT_AND_EXPECTANT_NEW_BABY = 'PARENT_AND_EXPECTANT_NEW_BABY',
 }
+export enum privilege {
+  SUPERADMIN = 'SUPERADMIN',
+  SCIENTIST = 'SCIENTIST',
+  MEMEBER = 'MEMBER',
+}

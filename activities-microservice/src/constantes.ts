@@ -13,3 +13,7 @@ export const ESPACE = ' ';
 export const USERS = 'USERS';
 export const ACTIVITIES_OF_WEEK = 'ACTIVITIES_OF_WEEK';
 export const GET_ACTIVITIES_OF_WEEK = { cmd: 'GET_ACTIVITIES_OF_WEEK' };
+export const CREATE_ACTIVITIES = {
+  cmd: 'CREATE_ACTIVITIES',
+  role: 'scientist',
+};

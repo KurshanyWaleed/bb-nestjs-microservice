@@ -3,16 +3,40 @@ export const AFTER_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   {
     title: { type: String, required: true },
     activities: {
-      type: [{ title: String, description: String, media: String }],
+      type: [
+        {
+          title: String,
+          description: String,
+          media: String,
+          neededAge: [Number],
+        },
+      ],
     },
   },
+  { timestamps: true },
+);
+export const ACTIVITIES_SCHEMA = new mongoose.Schema(
+  {
+    title: { type: String },
+    description: { type: String },
+    media: { type: String },
+    neededAge: { type: [Number] },
+  },
+
   { timestamps: true },
 );
 export const BEFORE_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   {
     title: { type: String, required: true },
     activities: {
-      type: [{ title: String, description: String, media: String }],
+      type: [
+        {
+          title: String,
+          description: String,
+          media: String,
+          neededAge: [Number],
+        },
+      ],
     },
   },
   { timestamps: true },
@@ -32,8 +56,20 @@ export class BeforeBorn {
   title: string;
   activities: [string];
 }
-export class ActivityDTO {
+export class WeekDTO {
   title: string;
   activities: [{ title: string; description: string; media: string }];
   media: string;
+}
+export class Activity {
+  title: string;
+  description: string;
+  media: string;
+  neededAge: [Number];
+}
+export class CreateActivityDTO {
+  title: string;
+  description: string;
+  media: string;
+  neededAge: [Number];
 }

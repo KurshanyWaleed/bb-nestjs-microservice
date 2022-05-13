@@ -26,6 +26,7 @@ import {
   LogInDto,
 } from './../models/users.dto';
 import { GroupDto } from 'src/models/group.dto';
+import { Activity } from 'src/models/users.model';
 
 @Controller('users')
 export class UsersController {
@@ -138,7 +139,12 @@ export class UsersController {
     const token = req.headers.authorization.split(ESPACE)[1];
     return await this.userServices.getAllUsers(token);
   }
-
+  @Post('admin/create-activities')
+  async createActivities(@Body() newActivity: Activity, @Req() req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    const payload = { token, newActivity };
+    return this.userServices.createActivites(payload);
+  }
   @Get('admin/this/user/:id')
   async getuser(@Param('id') _id: string, @Req() req: Request) {
     const token = req.headers.authorization.split(ESPACE)[1];

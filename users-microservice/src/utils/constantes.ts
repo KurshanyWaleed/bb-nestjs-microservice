@@ -27,6 +27,7 @@ export const INSCRIPTION = { cmd: 'inscription', role: 'user' };
 export const GET_ALL_USERS = { cmd: 'getAllUser', role: 'user/admin' };
 export const GET_USER_INFO = { cmd: 'getUser', role: 'user' };
 export const GET_ME = { cmd: 'getMe', role: 'user' };
+export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
 
 export const LOGIN = { cmd: 'login', role: 'user' };
 export const UPDATING = { cmd: 'updating', role: 'user' };

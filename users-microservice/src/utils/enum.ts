@@ -15,8 +15,8 @@ export enum BabyGender {
   GIRL = 'GIRL',
 }
 export enum privilege {
-  ADMIN = 'ADMIN',
-  DATA_ANALYSER = 'DATA_ANALYSER',
+  SUPERADMIN = 'SUPERADMIN',
+  SCIENTIST = 'SCIENTIST',
   MEMEBER = 'MEMBER',
 }
 

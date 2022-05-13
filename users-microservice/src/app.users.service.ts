@@ -3,7 +3,7 @@ import { OneSignalServices } from './utils/send.notif';
 import { GroupDto } from './models/group.dto';
 
 import { Administration, Token } from './models/users.model';
-import { Activity, UsersActivities } from './models/acitivites.model';
+import { Activity } from './models/acitivites.model';
 import {
   GET_USER_ACITIVITES,
   ADMIN,
@@ -170,8 +170,8 @@ export class UsersService {
       const admin = this.jwt.decode(token);
       const currentAdmin = admin as Token;
       if (
-        currentAdmin.role == privilege.ADMIN ||
-        currentAdmin.role == privilege.DATA_ANALYSER
+        currentAdmin.role == privilege.SUPERADMIN ||
+        currentAdmin.role == privilege.SCIENTIST
       ) {
         return await this.userModel.find();
       } else {
@@ -231,8 +231,8 @@ export class UsersService {
       const tokendetails = this.jwt.decode(token);
       const currentUser = tokendetails as Token;
       if (
-        currentUser.role == privilege.ADMIN ||
-        currentUser.role == privilege.DATA_ANALYSER ||
+        currentUser.role == privilege.SUPERADMIN ||
+        currentUser.role == privilege.SCIENTIST ||
         (currentUser.role == privilege.MEMEBER &&
           (await this.userModel.findOne({ _id }))._id == _id)
       ) {
@@ -362,18 +362,23 @@ export class UsersService {
   }
   //todo:------------------------------------------- administration -----------------------------------
   async createAdmin(newAdmin: adminDto) {
-    const newUser = await (
-      await this.adminModel.create({
-        ...newAdmin,
-        password: await bcrypt.hash(
-          newAdmin.password,
-          parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
-        ),
-        usersActivities: this.userActivities,
-      })
-    ).save();
-    return { new_admin: newUser._id };
+    try {
+      const newUser = await (
+        await this.adminModel.create({
+          ...newAdmin,
+          password: await bcrypt.hash(
+            newAdmin.password,
+            parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
+          ),
+          usersActivities: this.userActivities,
+        })
+      ).save();
+      return { new_admin: newUser._id };
+    } catch (e) {
+      return new ConflictException({ message: e });
+    }
   }
+
   async onUserAnalyse(token: string) {
     try {
       this.tokenAnalyser.isValidToken(token);

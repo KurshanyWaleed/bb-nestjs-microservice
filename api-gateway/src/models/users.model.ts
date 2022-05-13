@@ -40,3 +40,15 @@ export class User {
 
   ableToChangePassword: Boolean;
 }
+export class Activity {
+  title: string;
+  description: string;
+  media: string;
+  neededAge: [Number];
+}
+export class CreateActivityDTO {
+  title: string;
+  description: string;
+  media: string;
+  neededAge: [Number];
+}

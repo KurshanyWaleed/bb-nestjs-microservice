@@ -6,6 +6,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+  ACTIVITIES_SCHEMA,
+  Activity,
   AfterBorn,
   AFTER_BORN_ACTIVITIES_SCHEMA,
   BeforeBorn,
@@ -30,6 +32,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       {
         name: BeforeBorn.name,
         schema: BEFORE_BORN_ACTIVITIES_SCHEMA,
+      },
+      {
+        name: Activity.name,
+        schema: ACTIVITIES_SCHEMA,
       },
     ]),
     ClientsModule.register([

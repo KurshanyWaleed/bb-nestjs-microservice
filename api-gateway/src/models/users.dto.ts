@@ -3,7 +3,7 @@ import { babyGender, privilege, situation, userType } from 'src/utils/enum';
 
 export class adminDto {
   @IsNotEmpty()
-  userName: string;
+  identifier: string;
   @IsNotEmpty()
   @Length(6)
   password: string;

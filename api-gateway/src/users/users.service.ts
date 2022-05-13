@@ -2,7 +2,7 @@ import { ServiceSender } from './service.sender';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { adminDto } from './../models/users.dto';
 import { map, Observable } from 'rxjs';
-import { User } from 'src/models/users.model';
+import { Activity, User } from 'src/models/users.model';
 import { Request } from 'express';
 import {
   ConfirmEmailToUpadatePasswordDto,
@@ -176,8 +176,11 @@ export class UsersService {
       USERS,
     );
   }
-  //!------------------------------*[here]* probleme :'(
   async creategroup(data: { token: string; clientInformation: any }) {
     return this.service.sendThisDataToMicroService(NEW_GROUP, data, USERS);
+  }
+  //!------------------------------*[here]* probleme :'(
+  createActivites(payload: { token: string; newActivity: Activity }) {
+    return this.service.sendThisDataToMicroService(NEW_GROUP, payload, USERS);
   }
 }

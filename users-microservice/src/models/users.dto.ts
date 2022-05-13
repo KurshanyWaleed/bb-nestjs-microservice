@@ -2,7 +2,7 @@ import { IsEmail, IsEmpty, IsNotEmpty, Length } from 'class-validator';
 import { BabyGender, privilege, Situation, UserType } from 'src/utils/enum';
 
 export class adminDto {
-  userName: string;
+  id_number: string;
   password: string;
   privilege: privilege;
 }
@@ -14,7 +14,6 @@ export class RefreshTokenDto {
 export class LogInDto {
   @IsNotEmpty()
   userName: string;
-
   @IsNotEmpty()
   @Length(6)
   password: string;

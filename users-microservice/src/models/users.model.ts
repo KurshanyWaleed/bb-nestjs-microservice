@@ -62,8 +62,7 @@ export class User {
   location: string;
 
   password: string;
-
-  verified: Boolean;
+  verified = Boolean;
 
   photoProfile: String;
 
@@ -80,17 +79,17 @@ export class User {
 }
 export const AdministrationSchema = new mongoose.Schema(
   {
-    userName: { type: String, required: true, unique: true },
+    identifier: { type: String, required: true, unique: true },
     profileImage: { type: String, required: false, default: '' },
     password: { type: String, required: true },
-    privilege: { type: String, default: privilege.ADMIN, enum: privilege },
+    privilege: { type: String, default: privilege.SUPERADMIN, enum: privilege },
   },
   { timestamps: true },
 );
 export class Administration {
   _id: string;
   password: string;
-  userName: string;
+  identifier: string;
   profileImage: string;
   privilege: privilege;
 }

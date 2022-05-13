@@ -10,7 +10,13 @@ https://docs.nestjs.com/providers#services
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ActivityDTO, AfterBorn, BeforeBorn, WeekActivitiesDto } from './model';
+import {
+  AfterBorn,
+  BeforeBorn,
+  CreateActivityDTO,
+  WeekActivitiesDto,
+  WeekDTO,
+} from './model';
 import { ESPACE } from 'src/constantes';
 
 @Injectable()
@@ -25,7 +31,8 @@ export class ActivitiesService {
   ) {
     this.cron.createNewCrone('test');
   }
-  async createActivityService(week: ActivityDTO, type: string) {
+
+  async createActivityService(week: WeekDTO, type: string) {
     try {
       switch (type) {
         case '2':
@@ -120,4 +127,6 @@ export class ActivitiesService {
         );
     }
   }
+
+  async adminCreateActivityService(body: CreateActivityDTO) {}
 }

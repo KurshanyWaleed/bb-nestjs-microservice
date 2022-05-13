@@ -41,4 +41,10 @@ export const GET_USERS = {
   role: 'user',
 };
 export const NEW_GROUP = { cmd: 'ADD_NEW_GROUP', role: 'user/admin' };
+export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
+
 export const USER_VERIFY = { cmd: 'ANALYSER', role: '' };
+export const CREATE_ACTIVITIES = {
+  cmd: 'CREATE_ACTIVITIES',
+  role: 'scientist',
+};
