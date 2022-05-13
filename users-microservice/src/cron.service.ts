@@ -1,11 +1,16 @@
-import { Cron } from '@nestjs/schedule';
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { UsersService } from './app.users.service';
 import { ESPACE } from './utils/constantes';
+@Injectable()
 export class CronService {
   constructor(private readonly userService: UsersService) {}
+  //Crone every Day
 
-  @Cron('0 0 * * *')
-  async mondayCron() {
+  //@Cron('*/20 * * * * *')
+  @Cron(CronExpression.EVERY_DAY_AT_10AM)
+  async dayCron() {
+    console.log(Date().split(ESPACE)[0]);
     switch (Date().split(ESPACE)[0]) {
       case 'Mon':
         return await this.userService.activitiesOfWeekService('Mon');
@@ -23,4 +28,8 @@ export class CronService {
         return await this.userService.activitiesOfWeekService('San');
     }
   }
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // async ddayCron() {
+  //   console.log(Date().split(ESPACE)[0]);
+  // }
 }

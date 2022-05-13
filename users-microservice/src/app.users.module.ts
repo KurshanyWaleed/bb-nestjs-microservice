@@ -21,9 +21,21 @@ import {
 import { ServiceSender } from './service.sender';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { OneSignalModule } from 'onesignal-api-client-nest';
+import { OneSignalServices } from './utils/send.notif';
+import { CronService } from './cron.service';
 
 @Module({
   imports: [
+    OneSignalModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        return {
+          appId: configService.get('ONESIGNAL_APP_ID'),
+          restApiKey: configService.get('ONESIGNAL_REST_API_KEY'),
+        };
+      },
+      inject: [ConfigService],
+    }),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
@@ -74,7 +86,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
   ],
 
   controllers: [UsersController],
-  providers: [UsersService, TokenAnalyse, EmailService, ServiceSender],
+  providers: [
+    UsersService,
+    TokenAnalyse,
+    EmailService,
+    CronService,
+    ServiceSender,
+    OneSignalServices,
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}

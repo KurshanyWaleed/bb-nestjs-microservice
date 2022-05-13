@@ -1,3 +1,4 @@
+import { CronService } from './cron.service';
 import { TokenAnalyse } from './analyse.token';
 import { privilege } from './utils/enum';
 import {
@@ -21,7 +22,12 @@ import {
   GET_MY_ACTIVITIES,
   ESPACE,
 } from './utils/constantes';
-import { Controller, Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  UnauthorizedException,
+  Logger,
+} from '@nestjs/common';
 import { ClientProxy, MessagePattern } from '@nestjs/microservices';
 import { UsersService } from './app.users.service';
 import {
@@ -30,12 +36,14 @@ import {
   inscriptionDto,
 } from './models/users.dto';
 import { User } from './models/users.model';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller()
 export class UsersController {
   user: User[] = [];
   constructor(
-    private readonly userService: UsersService, //  @Inject('ACTIVITIES') private readonly service: ClientProxy,
+    private readonly userService: UsersService,
+    private readonly cron: CronService, //  @Inject('ACTIVITIES') private readonly service: ClientProxy,
   ) {}
   // todo signUp Account http
   // @Post()
@@ -48,6 +56,10 @@ export class UsersController {
   //   console.log(req);
   //   return this.userService.getUserservice(req);
   // }
+  //! Crone Job
+  cronJob() {
+    this.cron.dayCron();
+  }
   // todo signUp Account
   @MessagePattern(INSCRIPTION)
   async signUp(newUser: inscriptionDto) {

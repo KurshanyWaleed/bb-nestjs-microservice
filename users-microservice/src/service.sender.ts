@@ -88,4 +88,9 @@ export class ServiceSender
       .catch((e) => e);
     this.forumIsConnected = false;
   }
+
+  isInstanceOf() {
+    const service = this.isInstanceOf();
+    return { service };
+  }
 }

@@ -1,9 +1,11 @@
+import { UsersService } from 'src/app.users.service';
+import { CronService } from './cron.service';
 import { USER_MS_PORT, ESPACE } from './utils/constantes';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { UsersModule } from './app.users.module';
-import { Logger } from '@nestjs/common';
-
+import * as admin from 'firebase-admin';
+var serviceAccount = require('./utils/bbrains-firebase-adminsdk-uocdn-9bcdbf9ed1.json');
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     UsersModule,
@@ -18,10 +20,10 @@ async function bootstrap() {
     .listen()
     .then(() => console.log('USERS MS is listening on port : ' + USER_MS_PORT));
 
-  console.log(Date().split(ESPACE)[4] == '14:30:08');
-  if (Date().split(ESPACE)[4] == '14:30:08') {
-    console.log('its working');
-  }
+  // Initialize the firebase admin app
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 }
 
 bootstrap();

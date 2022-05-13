@@ -1,6 +1,7 @@
-import { Length } from 'class-validator';
+import { OneSignalServices } from './utils/send.notif';
+
 import { GroupDto } from './models/group.dto';
-import { BabyGender } from 'src/utils/enum';
+
 import { Administration, Token } from './models/users.model';
 import { Activity, UsersActivities } from './models/acitivites.model';
 import {
@@ -41,9 +42,6 @@ import { TokenAnalyse } from './analyse.token';
 
 import { privilege } from './utils/enum';
 import { ServiceSender } from './service.sender';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { SchedulerRegistry } from '@nestjs/schedule';
-import { CronJob } from 'cron';
 
 @Injectable()
 export class UsersService {
@@ -54,20 +52,24 @@ export class UsersService {
     @InjectModel('User') private readonly userModel: Model<User>,
     @InjectModel(Administration.name)
     private readonly adminModel: Model<Administration>,
-    private schedulerRegistry: SchedulerRegistry,
+    // private schedulerRegistry: SchedulerRegistry,
     private readonly config: ConfigService,
     private readonly tokenAnalyser: TokenAnalyse,
     private readonly jwt: JwtService,
     private readonly emailService: EmailService,
     private readonly service: ServiceSender,
-    private eventEmitter: EventEmitter2,
+    // private eventEmitter: EventEmitter2,
+    private oneSignal: OneSignalServices,
   ) {}
 
   //--------------------------------------begin---------
+
   async activitiesOfWeekService(payload?: string) {
     this.logger.verbose('----------------------------------------');
+
+    //console.log(res);
     const users = await this.userModel.find({ cronDay: payload });
-    users.forEach((user) => {
+    users.forEach(async (user) => {
       this.service
         .sendThisDataToMicroService(
           GET_ACTIVITIES_OF_WEEK,
@@ -92,7 +94,11 @@ export class UsersService {
               },
             },
           );
-          // // return currentUser;
+          const res = await this.oneSignal.createNotification(
+            'New Avtivities are ready',
+            user,
+          );
+          console.log(res);
         });
     });
   }
@@ -106,11 +112,11 @@ export class UsersService {
   //--------------------------------------1---------
   async createUser(data: inscriptionDto) {
     try {
-      const corns = this.schedulerRegistry.getCronJobs();
-      console.log(corns);
+      console.log(this.service.activitiesIsConnected);
       if (!this.service.activitiesIsConnected) {
+        console.log(this.service.isInstanceOf());
         return new BadGatewayException(
-          'The remote server is not in service 🦕 ',
+          `The remote${this.service.isInstanceOf()} server is not in service 🦕 `,
         );
       } else {
         this.service
@@ -123,31 +129,38 @@ export class UsersService {
             ACTIVITIES,
           )
           .subscribe((newdata) => (this.userActivities = newdata));
+        try {
+          const newUser = await (
+            await this.userModel.create({
+              ...data,
+              situation: data.situation,
+              babyAge: data.babyAge,
+              cronDay: Date().split(ESPACE)[0],
+              password: await bcrypt.hash(
+                data.password,
 
-        const newUser = await (
-          await this.userModel.create({
-            ...data,
-            situation: data.situation,
-            babyAge: data.babyAge,
-            cronDay: Date().split(ESPACE)[0],
-            password: await bcrypt.hash(
-              data.password,
+                parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
+              ),
+              usersActivities: this.userActivities,
+            })
+          ).save();
 
-              parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
-            ),
-            usersActivities: this.userActivities,
-          })
-        ).save();
-        const token = this.jwt.sign(
-          { username: newUser.userName },
-          { secret: this.config.get('SECRET') },
-        );
-        await this.emailService.sendEmail(newUser.email, token);
+          const token = this.jwt.sign(
+            { username: newUser.userName },
+            { secret: this.config.get('SECRET') },
+          );
 
-        return newUser;
+          await this.emailService.sendEmail(newUser.email, token);
+
+          return newUser;
+        } catch (e) {
+          return new ConflictException(e);
+        }
       }
     } catch (e) {
-      return new ConflictException(e);
+      return new BadRequestException({
+        error: `The remote${this.service.isInstanceOf()} server is not in service 🦕 `,
+      });
     }
   }
 
@@ -182,14 +195,16 @@ export class UsersService {
       };
     } catch (e) {
       return {
-        error: e,
+        error: 'invalid',
       };
     }
   }
   async userByToken(token: string) {
+    console.log(token);
     try {
       this.tokenAnalyser.isValidToken(token);
       const currentUser = this.jwt.decode(token) as Token;
+      console.log(currentUser);
       const { userName, location, situation, babyAge, babyGender } =
         await this.userModel.findOne({ _id: currentUser._id });
       return {
@@ -201,7 +216,7 @@ export class UsersService {
       };
     } catch (e) {
       return {
-        error: e,
+        error: 'invalid',
       };
     }
   }
