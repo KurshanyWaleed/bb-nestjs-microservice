@@ -1,10 +1,15 @@
 export enum Situation {
   EXPECTANT_NEW_BABY = 'EXPECTANT_NEW_BABY',
-  PERENT = 'PERENT',
+  PARENT = 'PARENT',
   PARENT_AND_EXPECTANT_NEW_BABY = 'PARENT_AND_EXPECTANT_NEW_BABY',
 }
 export enum privilege {
   SUPERADMIN = 'SUPERADMIN',
   SCIENTIST = 'SCIENTIST',
   MEMEBER = 'MEMBER',
+}
+export enum level {
+  EASY = 'EASY',
+  MEDIUM = 'MEDIUM',
+  HARD = 'HARD',
 }

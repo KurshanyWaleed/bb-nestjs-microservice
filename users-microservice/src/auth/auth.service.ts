@@ -11,7 +11,8 @@ import {
 } from '@nestjs/common';
 
 import { JwtService } from '@nestjs/jwt';
-import { ADMIN } from 'src/utils/constantes';
+
+import { privilege } from 'src/utils/enum';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
   async signInService(user: LogInDto) {
     try {
       switch (user.type) {
-        case MEMBER:
+        case privilege.MEMEBER:
           const loggeduser = await this.userservices.userByName(user.userName);
           if (!loggeduser) {
             return new NotFoundException('Invalid credential');
@@ -54,7 +55,7 @@ export class AuthService {
             } else return new UnauthorizedException('Invalid credential !');
           }
 
-        case ADMIN:
+        case privilege.SCIENTIST:
           const loggedAdmin = await this.userservices.adminByuserName(
             user.userName,
           );
@@ -84,6 +85,38 @@ export class AuthService {
               };
             } else return new UnauthorizedException('Invalid credential !');
           }
+        case privilege.SUPERADMIN: {
+          const loggedAdmin = await this.userservices.adminByuserName(
+            user.userName,
+          );
+          console.log(loggedAdmin);
+          if (!loggedAdmin) {
+            return new NotFoundException('Invalid credential');
+          } else {
+            const isMatch = await bcrypt.compare(
+              user.password,
+              loggedAdmin.password,
+            );
+            if (isMatch) {
+              const payload = {
+                userName: user.userName,
+                _id: loggedAdmin._id,
+                role: loggedAdmin.privilege,
+              };
+
+              const token = this.jwt.sign(payload);
+              const refresh_token = this.jwt.sign(payload, {
+                secret: this.config.get('SECRET_REF'),
+                expiresIn: '1y',
+              });
+
+              return {
+                access_token: token,
+                refresh_token: refresh_token,
+              };
+            } else return new UnauthorizedException('Invalid credential !');
+          }
+        }
         default:
           return { message: 'type of user do not exist !' };
       }

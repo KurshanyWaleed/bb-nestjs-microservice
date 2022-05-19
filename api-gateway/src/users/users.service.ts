@@ -2,7 +2,7 @@ import { ServiceSender } from './service.sender';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { adminDto } from './../models/users.dto';
 import { map, Observable } from 'rxjs';
-import { Activity, User } from 'src/models/users.model';
+import { Activity, CreateActivityDTO, User } from 'src/models/users.model';
 import { Request } from 'express';
 import {
   ConfirmEmailToUpadatePasswordDto,
@@ -32,6 +32,14 @@ import {
   GET_PERMISSION,
   GET_ME,
   GET_MY_ACTIVITIES,
+  NEW_ACTIVITY,
+  UPDATE_ACTIVITY,
+  NEW_QUESTION,
+  UPDATE_QUESTION,
+  DELETE_QUESTION,
+  GET_ALL_QUESTIONS,
+  GET_QUESTION_BY_ID,
+  ANSWER_QUESTION,
 } from './../utils/constantes';
 
 @Injectable()
@@ -179,8 +187,81 @@ export class UsersService {
   async creategroup(data: { token: string; clientInformation: any }) {
     return this.service.sendThisDataToMicroService(NEW_GROUP, data, USERS);
   }
-  //!------------------------------*[here]* probleme :'(
-  createActivites(payload: { token: string; newActivity: Activity }) {
-    return this.service.sendThisDataToMicroService(NEW_GROUP, payload, USERS);
+  createActivites(payload: { token: string; newActivity: CreateActivityDTO }) {
+    console.log(payload);
+    return this.service.sendThisDataToMicroService(
+      NEW_ACTIVITY,
+      payload,
+      USERS,
+    );
   }
+  //!------------------------------*[here]*  :D
+  updateActivity(payload: { token: string; attributes: any; _id: string }) {
+    return this.service.sendThisDataToMicroService(
+      UPDATE_ACTIVITY,
+      payload,
+      USERS,
+    );
+  }
+  //?-------------------------------------FAQ
+  //add question
+  createQustionService(payload: {
+    token: string;
+    newQuestion: { content: string; requested: boolean; answer: string };
+  }) {
+    return this.service.sendThisDataToMicroService(
+      NEW_QUESTION,
+      payload,
+      USERS,
+    );
+  }
+  //get all questions
+
+  getAllQuestionsService(token: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_ALL_QUESTIONS,
+      token,
+      USERS,
+    );
+  }
+  //add questions by id
+  getQustionbyIdService(payload: { token: string; id_question: string }) {
+    return this.service.sendThisDataToMicroService(
+      GET_QUESTION_BY_ID,
+      payload,
+      USERS,
+    );
+  }
+  // update question by administration
+  updateQustionbyIdService(payload: {
+    token: string;
+    id_question: string;
+    attributes: string;
+  }) {
+    return this.service.sendThisDataToMicroService(
+      UPDATE_QUESTION,
+      payload,
+      USERS,
+    );
+  }
+
+  // delete question by administration
+  deleteQustionbyIdService(payload: { token: string; id_question: string }) {
+    return this.service.sendThisDataToMicroService(
+      DELETE_QUESTION,
+      payload,
+      USERS,
+    );
+  }
+  // answerQustionbyIdService(data: {
+  //   token: string;
+  //   id_question: string;
+  //   answer: string;
+  // }) {
+  //   return this.service.sendThisDataToMicroService(
+  //     ANSWER_QUESTION,
+  //     data,
+  //     USERS,
+  //   );
+  // }
 }

@@ -8,6 +8,19 @@ export const FORUM_MS_PORT = 7001;
 export const USERS = 'USERS';
 export const FORUM = 'FORUM';
 export const ESPACE = ' ';
+export const ANSWER_QUESTION = { cmd: 'ANSWER_QUESTION', role: 'user/admin' };
+export const NEW_QUESTION = { cmd: 'NEW_QUESTION', role: 'user/admin' };
+export const UPDATE_QUESTION = { cmd: 'UPDATE_QUESTION', role: 'user/admin' };
+export const DELETE_QUESTION = { cmd: 'DELETE_QUESTION', role: 'user/admin' };
+export const GET_QUESTION_BY_ID = {
+  cmd: ' GET_QUESTION_BY_ID',
+  role: 'user/admin',
+};
+export const GET_ALL_QUESTIONS = {
+  cmd: 'GET_ALL_QUESTIONS',
+  role: 'user/admin',
+};
+
 export const GET_ALL_USERS = { cmd: 'getAllUser', role: 'user/admin' };
 export const GET_USER = { cmd: 'get_user', role: 'user/admin' };
 export const INSCRI_ADMIN = { cmd: 'inscriptionAdmin', role: 'user' };
@@ -42,9 +55,5 @@ export const GET_USERS = {
 };
 export const NEW_GROUP = { cmd: 'ADD_NEW_GROUP', role: 'user/admin' };
 export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
-
+export const UPDATE_ACTIVITY = { cmd: 'UPDATE_ACTIVITY', role: 'admin' };
 export const USER_VERIFY = { cmd: 'ANALYSER', role: '' };
-export const CREATE_ACTIVITIES = {
-  cmd: 'CREATE_ACTIVITIES',
-  role: 'scientist',
-};

@@ -3,10 +3,9 @@ import { OneSignalServices } from './utils/send.notif';
 import { GroupDto } from './models/group.dto';
 
 import { Administration, Token } from './models/users.model';
-import { Activity } from './models/acitivites.model';
+import { Activity, CreateActivityDTO } from './models/acitivites.model';
 import {
   GET_USER_ACITIVITES,
-  ADMIN,
   NEW_GROUP,
   FORUM,
   ACTIVITIES,
@@ -14,6 +13,12 @@ import {
   MEMBER,
   ESPACE,
   GET_ACTIVITIES_OF_WEEK,
+  NEW_ACTIVITY,
+  NEW_QUESTION,
+  UPDATE_QUESTION,
+  GET_QUESTION_BY_ID,
+  GET_ALL_QUESTIONS,
+  DELETE_QUESTION,
 } from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
@@ -42,6 +47,7 @@ import { TokenAnalyse } from './analyse.token';
 
 import { privilege } from './utils/enum';
 import { ServiceSender } from './service.sender';
+import { memoryUsage } from 'process';
 
 @Injectable()
 export class UsersService {
@@ -76,7 +82,7 @@ export class UsersService {
 
           {
             last_week_activities:
-              user.usersActivities[user.usersActivities.length - 1].title.split(
+              user.usersActivities[user.usersActivities.length - 1].week.split(
                 ESPACE,
               )[1],
             user_situation: user.situation,
@@ -94,11 +100,11 @@ export class UsersService {
               },
             },
           );
-          const res = await this.oneSignal.createNotification(
-            'New Avtivities are ready',
-            user,
-          );
-          console.log(res);
+          // const res = await this.oneSignal.createNotification(
+          //   'New Avtivities are ready',
+          //   user,
+          // );
+          // console.log(res);
         });
     });
   }
@@ -128,7 +134,11 @@ export class UsersService {
             },
             ACTIVITIES,
           )
-          .subscribe((newdata) => (this.userActivities = newdata));
+          .subscribe(async (newdata) => {
+            console.log('ttttttttttttttttttttttt' + (await newdata));
+            this.userActivities = await newdata;
+          });
+        console.log('out' + this.userActivities);
         try {
           const newUser = await (
             await this.userModel.create({
@@ -181,7 +191,7 @@ export class UsersService {
   }
 
   async adminByuserName(userName: string) {
-    return await this.adminModel.findOne({ userName });
+    return await this.adminModel.findOne({ identifier: userName });
   }
   async activitiesByToken(token: string) {
     try {
@@ -313,7 +323,6 @@ export class UsersService {
       return { message: 'Invalid token !' };
     }
   }
-  //!------------------------------------------[here]5
   //todo :refresh permission
   async refreshPermissionService(token: string) {
     const user = this.jwt.decode(token) as Token;
@@ -363,6 +372,7 @@ export class UsersService {
   //todo:------------------------------------------- administration -----------------------------------
   async createAdmin(newAdmin: adminDto) {
     try {
+      console.log(newAdmin);
       const newUser = await (
         await this.adminModel.create({
           ...newAdmin,
@@ -370,11 +380,11 @@ export class UsersService {
             newAdmin.password,
             parseInt(this.config.get<string>('SALT_OR_ROUNDS')),
           ),
-          usersActivities: this.userActivities,
         })
       ).save();
       return { new_admin: newUser._id };
     } catch (e) {
+      console.log(e);
       return new ConflictException({ message: e });
     }
   }
@@ -391,8 +401,8 @@ export class UsersService {
     }
   }
   async creategroup(token: string, newGroup: GroupDto) {
-    const previlege = await this.onUserAnalyse(token);
-    if (previlege == ADMIN) {
+    const previ = await this.onUserAnalyse(token);
+    if (previ == privilege.SUPERADMIN) {
       return this.service.sendThisDataToMicroService(
         NEW_GROUP,
         newGroup,
@@ -415,6 +425,157 @@ export class UsersService {
       );
     } else {
       return { message: 'Please try to sign-in first then try again ' };
+    }
+  }
+  async createActivitie(payload: {
+    token: string;
+    newActivity: CreateActivityDTO;
+  }) {
+    const previ = await this.onUserAnalyse(payload.token);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        NEW_ACTIVITY,
+        payload.newActivity,
+        ACTIVITIES,
+      );
+    } else {
+      return { message: 'access_denied' };
+    }
+  }
+
+  async updateActivitie(payload: {
+    token: string;
+    attributes: any;
+    _id: string;
+  }) {
+    const previ = await this.onUserAnalyse(payload.token);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        NEW_ACTIVITY,
+        { attributes: payload.attributes, _id: payload._id },
+        ACTIVITIES,
+      );
+    } else {
+      return { message: 'access_denied' };
+    }
+  }
+  //?------------------------------------------------FAQ
+
+  async createNewQuestionService(payload: {
+    token: string;
+    newQuestion: { content: string; requested: boolean; answer: string };
+  }) {
+    const previ = await this.onUserAnalyse(payload.token);
+    const decoded = this.jwt.decode(payload.token);
+    const user = decoded as Token;
+    console.log('gggggggggg ' + user._id);
+    console.log('gggggggggg ' + user.role);
+
+    if (user.role == privilege.MEMEBER) {
+      console.log('ffffffffffff');
+      return this.service.sendThisDataToMicroService(
+        NEW_QUESTION,
+        {
+          content: payload.newQuestion.content,
+          requested: true,
+          answer: payload.newQuestion.answer,
+          addedBy: user._id,
+        },
+        FORUM,
+      );
+    } else if (
+      user.role == privilege.SCIENTIST ||
+      user.role == privilege.SUPERADMIN
+    ) {
+      if (payload.newQuestion.answer == '') {
+        return { message: 'Answer Field should not be Empty' };
+      } else {
+        return this.service.sendThisDataToMicroService(
+          NEW_QUESTION,
+          {
+            content: payload.newQuestion.content,
+            requested: false,
+            answer: payload.newQuestion.answer,
+            addedBy: user._id,
+          },
+          FORUM,
+        );
+      }
+    }
+
+    // export class QuestionDto {
+    //   content: string;
+    //   answer: string;
+    //   createdby: string;
+    //   requested: string;
+    //   media: string;
+    // }
+  }
+  // answerQuestionService(payload: { token: string;
+  //   id_question: string;
+  //   answer: string;}){
+
+  //   };
+  //!------------------------------------------[here]5
+  async getAllQuestionsService(token: string) {
+    const decoded = this.jwt.decode(token);
+    const user = decoded as Token;
+    return this.service.sendThisDataToMicroService(
+      GET_ALL_QUESTIONS,
+      user.role,
+      FORUM,
+    );
+  }
+  async getQuestionByIdService({ token, id_question }) {
+    const previ = await this.onUserAnalyse(token);
+    if (
+      previ == privilege.MEMEBER ||
+      privilege.SCIENTIST ||
+      privilege.SUPERADMIN
+    ) {
+      return this.service.sendThisDataToMicroService(
+        GET_QUESTION_BY_ID,
+        id_question,
+        FORUM,
+      );
+    } else {
+      return new UnauthorizedException();
+    }
+  }
+
+  //todo update question
+  async updateQuestionService(payload: {
+    token: string;
+    id_question: string;
+    attributes: string;
+  }) {
+    const previ = await this.onUserAnalyse(payload.token);
+    const decoded = this.jwt.decode(payload.token);
+    const user = decoded as Token;
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      const attributes = payload.attributes;
+      const id_question = payload.id_question;
+
+      return this.service.sendThisDataToMicroService(
+        UPDATE_QUESTION,
+        { attributes, id_question, editedby: user._id },
+        FORUM,
+      );
+    } else {
+      return new UnauthorizedException('access dineid');
+    }
+  }
+
+  async deleteQuestion(token: string, id_question: string) {
+    const previ = await this.onUserAnalyse(token);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        DELETE_QUESTION,
+        id_question,
+        FORUM,
+      );
+    } else {
+      return new UnauthorizedException('access deneid');
     }
   }
 }

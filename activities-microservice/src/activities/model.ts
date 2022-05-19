@@ -1,14 +1,16 @@
 import * as mongoose from 'mongoose';
+import { level } from './enum';
 export const AFTER_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    week: { type: String },
     activities: {
       type: [
         {
-          title: String,
-          description: String,
-          media: String,
-          neededAge: [Number],
+          title: { type: String },
+          description: { type: String },
+          media: { type: String },
+          level: { type: String, enuml: level, default: level.EASY },
+          isDone: { type: Boolean, default: false },
         },
       ],
     },
@@ -20,21 +22,23 @@ export const ACTIVITIES_SCHEMA = new mongoose.Schema(
     title: { type: String },
     description: { type: String },
     media: { type: String },
-    neededAge: { type: [Number] },
+    level: { type: String, enuml: level, default: level.EASY },
+    isDone: { type: Boolean, default: false },
   },
 
   { timestamps: true },
 );
 export const BEFORE_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    week: { type: String },
     activities: {
       type: [
         {
-          title: String,
-          description: String,
-          media: String,
-          neededAge: [Number],
+          title: { type: String },
+          description: { type: String },
+          media: { type: String },
+          level: { type: String, enuml: level, default: level.EASY },
+          isDone: { type: Boolean, default: false },
         },
       ],
     },
@@ -48,28 +52,41 @@ export class WeekActivitiesDto {
 
 export class AfterBorn {
   _id: string;
-  title: string;
-  activities: [string];
+  week: string;
+  activities: [Activity];
 }
 export class BeforeBorn {
   _id: string;
-  title: string;
-  activities: [string];
+  week: string;
+  activities: [Activity];
 }
 export class WeekDTO {
-  title: string;
-  activities: [{ title: string; description: string; media: string }];
+  week: string;
+  activities: [
+    {
+      title: string;
+      description: string;
+      media: string;
+      level: level;
+      isDone: boolean;
+    },
+  ];
   media: string;
 }
 export class Activity {
+  _id: string;
   title: string;
   description: string;
   media: string;
-  neededAge: [Number];
+  level: level;
+  isDone: boolean;
 }
 export class CreateActivityDTO {
   title: string;
   description: string;
   media: string;
-  neededAge: [Number];
+  week: [number];
+  isBorn: boolean;
+  level: string;
+  isDone: boolean;
 }

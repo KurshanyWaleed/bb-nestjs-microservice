@@ -7,7 +7,7 @@ export class CronService {
   constructor(private readonly userService: UsersService) {}
   //Crone every Day
 
-  //@Cron('*/20 * * * * *')
+  //@Cron('35 * * * * *')
   @Cron(CronExpression.EVERY_DAY_AT_10AM)
   async dayCron() {
     console.log(Date().split(ESPACE)[0]);

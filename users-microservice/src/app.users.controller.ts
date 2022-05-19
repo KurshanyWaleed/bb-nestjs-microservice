@@ -22,6 +22,13 @@ import {
   GET_MY_ACTIVITIES,
   ESPACE,
   NEW_ACTIVITY,
+  UPDATE_ACTIVITY,
+  NEW_QUESTION,
+  UPDATE_QUESTION,
+  GET_ALL_QUESTIONS,
+  DELETE_QUESTION,
+  ANSWER_QUESTION,
+  GET_QUESTION_BY_ID,
 } from './utils/constantes';
 import {
   Controller,
@@ -38,6 +45,7 @@ import {
 } from './models/users.dto';
 import { User } from './models/users.model';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Activity, CreateActivityDTO } from './models/acitivites.model';
 
 @Controller()
 export class UsersController {
@@ -143,7 +151,6 @@ export class UsersController {
   getallUsers(token: string) {
     return this.userService.getUsers(token);
   }
-  //!------------------------------------------[here]
   @MessagePattern(GET_ME)
   getMe(token: string) {
     return this.userService.userByToken(token);
@@ -158,10 +165,7 @@ export class UsersController {
     return this.userService.user_id(data._id, data.token);
   }
   //---------------------------------------admin
-  @MessagePattern(NEW_ACTIVITY)
-  async createActivity(data: { token: string; clientInformation: any }) {
-    return this.userService.creategroup(data.token, data.clientInformation);
-  }
+
   @MessagePattern(NEW_GROUP)
   async privilegeAlayzer(data: { token: string; clientInformation: any }) {
     return this.userService.creategroup(data.token, data.clientInformation);
@@ -174,6 +178,66 @@ export class UsersController {
       groupTitle: payload.groupTitle,
     });
   }
+  @MessagePattern(NEW_ACTIVITY)
+  async createActivity(payload: {
+    token: string;
+    newActivity: CreateActivityDTO;
+  }) {
+    console.log(payload);
+    return this.userService.createActivitie(payload);
+  }
+  @MessagePattern(UPDATE_ACTIVITY)
+  async updateActivitie(payload: {
+    token: string;
+    attributes: any;
+    _id: string;
+  }) {
+    console.log(payload);
+    return this.userService.updateActivitie(payload);
+  }
+  //?----------------------------------------FAQ
+  @MessagePattern(NEW_QUESTION)
+  createNewQuestion(payload: {
+    token: string;
+    newQuestion: { content: string; requested: boolean; answer: string };
+  }) {
+    return this.userService.createNewQuestionService(payload);
+  }
+  // // todo answer qusetion
+  // @MessagePattern(ANSWER_QUESTION)
+  // answerQuestion(payload: {
+  //   token: string;
+  //   id_question: string;
+  //   answer: string;
+  // }) {
+  //   return this.userService.answerQuestionService(payload);
+  // }
+  //!------------------------------------------[here]
+  @MessagePattern(UPDATE_QUESTION)
+  updateQuestion(payload: {
+    token: string;
+    id_question: string;
+    attributes: string;
+  }) {
+    return this.userService.updateQuestionService(payload);
+  }
+
+  @MessagePattern(GET_ALL_QUESTIONS)
+  getAllQuestions(token: string) {
+    return this.userService.getAllQuestionsService(token);
+  }
+
+  //todo get question By ID
+  @MessagePattern(GET_QUESTION_BY_ID)
+  getQuestionByIdService(payload: { token: string; id_question: string }) {
+    return this.userService.getQuestionByIdService(payload);
+  }
+
+  @MessagePattern(DELETE_QUESTION)
+  deleteQuestion({ token, id_question }) {
+    return this.userService.deleteQuestion(token, id_question);
+  }
+
   //********************************************************************* */
   // @Cron(CronExpression.EVERY_WEEK)
   // async activitiesOfWeek() {

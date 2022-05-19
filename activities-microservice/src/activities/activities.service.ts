@@ -1,4 +1,4 @@
-import { Situation } from './enum';
+import { level, Situation } from './enum';
 import { CronService } from './cron.service';
 import { USERS } from './../constantes';
 import { ClientProxy } from '@nestjs/microservices/client';
@@ -32,21 +32,21 @@ export class ActivitiesService {
     this.cron.createNewCrone('test');
   }
 
-  async createActivityService(week: WeekDTO, type: string) {
+  async createActivityService(weeks: WeekDTO, type: string) {
     try {
       switch (type) {
         case '2':
           if ((await this.ActivityABModel.find()).length == 0) {
             for (var i = 1; i <= 96; i++) {
-              week.title = `Week ${i} Activities`;
-              var acts = [...week.activities];
+              weeks.week = `Week ${i} Activities`;
+              var acts = [...weeks.activities];
               acts[0].title = `The first Activity for week ${i} : Lorum ipserum antom cherum`;
               acts[1].title = `The second Activity for week ${i} : Lorum ipserum cherum antom`;
               acts[2].title = `The Theard Activity for week ${i} : Lorum ipserum ant `;
 
               console.log(acts);
               await new this.ActivityABModel({
-                title: week.title,
+                week: weeks.week,
                 activities: [...acts],
                 media: '',
               }).save();
@@ -59,15 +59,15 @@ export class ActivitiesService {
         case '1':
           if ((await this.ActivityBBModel.find()).length == 0) {
             for (var i = 1; i <= 36; i++) {
-              week.title = `Week ${i} Activities`;
-              var acts = [...week.activities];
+              weeks.week = `Week ${i} Activities`;
+              var acts = [...weeks.activities];
               acts[0].title = `The first Activity for week ${i} : Lorum ipserum antom cherum`;
               acts[1].title = `The second Activity for week ${i} : Lorum ipserum cherum antom`;
               acts[2].title = `The Theard Activity for week ${i} : Lorum ipserum ant `;
 
               console.log(acts);
               await new this.ActivityBBModel({
-                title: week.title,
+                week: weeks.week,
                 activities: [...acts],
                 media: '',
               }).save();
@@ -84,49 +84,109 @@ export class ActivitiesService {
 
   async getActivitiesService(sit: situation, babyAge: number) {
     if (sit == situation.EXPECTANT_NEW_BABY) {
-      console.log(
-        'passed here' +
-          sit +
-          (await this.ActivityBBModel.find({})).filter(
-            (week) =>
-              Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
-          )[0],
-      );
-      return (await this.ActivityBBModel.find({})).filter(
-        (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
+      const data = (await this.ActivityBBModel.find({})).filter(
+        (weeks) => Number(weeks.week.split(ESPACE)[1]) >= Number(babyAge / 7),
       )[0];
-    } else if (sit == situation.PERENT) {
-      return (await this.ActivityABModel.find({})).filter(
-        (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
+      const act = {
+        week: data.week,
+        activities: data.activities
+          .filter((actv) => actv.level == 'EASY')
+          .slice(0, 3),
+      };
+      return act;
+
+      //
+      //
+      //
+      //
+      //
+    } else if (sit == situation.PARENT) {
+      const data = (await this.ActivityABModel.find({})).filter(
+        (weeks) => Number(weeks.week.split(ESPACE)[1]) >= Number(babyAge / 7),
       )[0];
+      const act = {
+        week: data.week,
+        activities: data.activities
+          .filter((actv) => actv.level == 'EASY')
+          .slice(0, 3),
+      };
+
+      return act;
     } else if (sit == situation.PARENT_AND_EXPECTANT_NEW_BABY) {
-      return (await this.ActivityBBModel.find({})).filter(
-        (week) => Number(week.title.split(ESPACE)[1]) >= Number(babyAge / 7),
+      const data = (await this.ActivityBBModel.find({})).filter(
+        (weeks) => Number(weeks.week.split(ESPACE)[1]) >= Number(babyAge / 7),
       )[0];
+      const act = {
+        week: data.week,
+        activities: data.activities.filter((actv) => actv.level == 'EASY'),
+      };
+
+      return act;
     }
   }
   async handelIncomminData(payload: WeekActivitiesDto) {
     switch (payload.user_situation) {
       case Situation.EXPECTANT_NEW_BABY:
         return (await this.ActivityBBModel.find()).filter(
-          (week) =>
-            Number(week.title.split(ESPACE)[1]) ==
+          (weeks) =>
+            Number(weeks.week.split(ESPACE)[1]) ==
             Number(payload.last_week_activities) + 1,
         );
       case Situation.PARENT_AND_EXPECTANT_NEW_BABY:
         return (await this.ActivityBBModel.find()).filter(
-          (week) =>
-            Number(week.title.split(ESPACE)[1]) ==
+          (weeks) =>
+            Number(weeks.week.split(ESPACE)[1]) ==
             Number(payload.last_week_activities) + 1,
         );
-      case Situation.PERENT:
-        return (await this.ActivityABModel.find()).filter(
-          (week) =>
-            Number(week.title.split(ESPACE)[1]) ==
+      case Situation.PARENT:
+        const data = (await this.ActivityABModel.find()).filter(
+          (weeks) =>
+            Number(weeks.week.split(ESPACE)[1]) ==
             Number(payload.last_week_activities) + 1,
         );
+
+        return data;
     }
   }
 
-  async adminCreateActivityService(body: CreateActivityDTO) {}
+  async onCreateActivityService(activity: CreateActivityDTO) {
+    try {
+      console.log({ activity });
+      if (activity.isBorn) {
+        const { title, description, media, level } = activity;
+        activity.week.map(async (date) => {
+          await this.ActivityABModel.updateOne(
+            { week: 'Week ' + date + ' Activities' },
+            {
+              $push: {
+                activities: { title, description, media, level },
+              },
+            },
+          );
+        });
+
+        return { message: 'the new Activitie has been added sucsessfuly' };
+      } else {
+        const { title, description, media, level } = activity;
+        activity.week.map(async (date) => {
+          await this.ActivityBBModel.updateOne(
+            { week: 'Week ' + date + ' Activities' },
+            {
+              $push: {
+                activities: { title, description, media, level },
+              },
+            },
+          );
+        });
+
+        return { message: 'the new Activitie has been added sucsessfuly' };
+      }
+    } catch (e) {
+      return new BadRequestException(e);
+    }
+  }
+
+  async onUpdateActivityService(attributes: any) {
+    return { message: attributes };
+  }
 }

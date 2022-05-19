@@ -1,6 +1,7 @@
 import { ESPACE, local_BASE_URL_USERS } from './../utils/constantes';
 import { BabyGenderPipe, StatusPipe } from 'src/pipes/customPipes';
 import { JwtAuthGuard } from './guards/auth.guard';
+
 import { adminDto, inscriptionDto } from 'src/models/users.dto';
 import { UsersService } from './users.service';
 import { Request, Response } from 'express';
@@ -26,7 +27,7 @@ import {
   LogInDto,
 } from './../models/users.dto';
 import { GroupDto } from 'src/models/group.dto';
-import { Activity } from 'src/models/users.model';
+import { Activity, CreateActivityDTO } from 'src/models/users.model';
 
 @Controller('users')
 export class UsersController {
@@ -139,16 +140,10 @@ export class UsersController {
     const token = req.headers.authorization.split(ESPACE)[1];
     return await this.userServices.getAllUsers(token);
   }
-  @Post('admin/create-activities')
-  async createActivities(@Body() newActivity: Activity, @Req() req: Request) {
-    const token = req.headers.authorization.split(ESPACE)[1];
-    const payload = { token, newActivity };
-    return this.userServices.createActivites(payload);
-  }
+
   @Get('admin/this/user/:id')
   async getuser(@Param('id') _id: string, @Req() req: Request) {
     const token = req.headers.authorization.split(ESPACE)[1];
-
     return await this.userServices.getUserById(_id, token);
   }
   @Post('admin/add-new-group')
@@ -163,4 +158,119 @@ export class UsersController {
       return new UnauthorizedException();
     }
   }
+  //! creation of activities :
+  @Post('admin/create-activities')
+  async createActivities(
+    @Body() newActivity: CreateActivityDTO,
+    @Req() req: Request,
+  ) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    const payload = { token, newActivity };
+    return this.userServices.createActivites(payload);
+  }
+
+  @Post('admin/update-activity/:id')
+  async updateActivities(
+    @Param('id') _id,
+    @Body() attributes: any,
+    @Req() req: Request,
+  ) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    const payload = { token, attributes, _id };
+
+    return this.userServices.updateActivity(payload);
+  }
+  //?-----------------------------------------------------------FAQ
+  //! add qustion
+
+  @Post('/add-new-question')
+  createQustion(
+    @Body()
+    newQuestion: { content: string; requested: boolean; answer: string },
+    @Req() req: Request,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.createQustionService({
+        token,
+        newQuestion,
+      });
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //! get questions
+
+  @Get('get-questions')
+  getQustions(@Req() req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    try {
+      return this.userServices.getAllQuestionsService(token);
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //! get qustion by id
+
+  @Get('get-question/:id')
+  getQustionbyId(@Param('id') id_question: string, @Req() req: Request) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+
+      return this.userServices.getQustionbyIdService({
+        token,
+        id_question,
+      });
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //todo  update question administration
+
+  @Post('/update-qustions/:id')
+  updateQustionbyId(
+    @Body() attributes: string,
+    @Param('id') id_question: string,
+    @Req() req: Request,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.updateQustionbyIdService({
+        token,
+        id_question,
+        attributes,
+      });
+    } catch (e) {
+      return new UnauthorizedException(e);
+    }
+  }
+  //todo delete question administration
+
+  @Delete('/delete-qustion/:id')
+  deleteQustionbyId(@Param('id') id_question: string, @Req() req: Request) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.deleteQustionbyIdService({
+        token,
+        id_question,
+      });
+    } catch (e) {
+      return new UnauthorizedException('access denied');
+    }
+  }
+  // //todo  add answer to question
+  // @UseGuards(JwtAuthGuard)
+  // @Post('/answer-qustions/:id')
+  // answerQustionbyId(
+  //   @Body() answer: string,
+  //   @Param('id') id_question: string,
+  //   @Req() req: Request,
+  // ) {
+  //   const token = req.headers.authorization.split(ESPACE)[1];
+  //   return this.userServices.answerQustionbyIdService({
+  //     token,
+  //     id_question,
+  //     answer,
+  //   });
+  // }
 }

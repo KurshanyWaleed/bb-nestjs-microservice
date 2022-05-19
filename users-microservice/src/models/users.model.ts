@@ -1,5 +1,11 @@
 import { Activity, UsersActivities } from './acitivites.model';
-import { Situation, BabyGender, UserType, privilege } from './../utils/enum';
+import {
+  Situation,
+  BabyGender,
+  UserType,
+  privilege,
+  level,
+} from './../utils/enum';
 import mongoose from 'mongoose';
 export class Token {
   userName: string;
@@ -11,11 +17,11 @@ export class Token {
 
 export const ActivitySchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
     description: { type: String },
     isComplited: { type: Boolean, default: false },
-    isDone: { type: Boolean, default: false },
     media: { type: String },
+    level: { type: String, default: level.EASY, enum: level },
   },
   { timestamps: true },
 );
@@ -37,7 +43,7 @@ export const UserSchema = new mongoose.Schema(
     deviceToken: { type: String, default: '', unique: true },
     memberIn: { type: [mongoose.Schema.Types.ObjectId], ref: 'group' },
     usersActivities: {
-      type: [{ title: String, activities: [ActivitySchema] }],
+      type: [{ week: String, activities: [ActivitySchema] }],
       // ref: "Activities",
     },
   },
@@ -62,6 +68,7 @@ export class User {
   location: string;
 
   password: string;
+
   verified = Boolean;
 
   photoProfile: String;
@@ -69,6 +76,7 @@ export class User {
   memberIn: string[];
 
   role: UserType;
+
   usersActivities: UsersActivities[];
 
   ableToChangePassword: Boolean;
@@ -80,16 +88,16 @@ export class User {
 export const AdministrationSchema = new mongoose.Schema(
   {
     identifier: { type: String, required: true, unique: true },
-    profileImage: { type: String, required: false, default: '' },
+    profileImage: { type: String },
     password: { type: String, required: true },
     privilege: { type: String, default: privilege.SUPERADMIN, enum: privilege },
   },
   { timestamps: true },
 );
 export class Administration {
+  identifier: string;
   _id: string;
   password: string;
-  identifier: string;
   profileImage: string;
   privilege: privilege;
 }

@@ -2,7 +2,7 @@
 
 export enum situation {
   EXPECTANT_NEW_BABY = 'EXPECTANT_NEW_BABY',
-  PERENT = 'PERENT',
+  PERENT = 'PARENT',
   PARENT_AND_EXPECTANT_NEW_BABY = 'PARENT_AND_EXPECTANT_NEW_BABY',
 }
 
@@ -18,6 +18,11 @@ export enum privilege {
   SUPERADMIN = 'SUPERADMIN',
   SCIENTIST = 'SCIENTIST',
   MEMEBER = 'MEMBER',
+}
+export enum level {
+  EASY = 'EASY',
+  MEDIUM = 'MEDIUM',
+  HARD = 'HARD',
 }
 // registerEnumType(Situation, {
 //   name: 'Situation',

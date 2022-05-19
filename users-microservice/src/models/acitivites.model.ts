@@ -1,13 +1,24 @@
+import { level } from 'src/utils/enum';
+
 export class Activity {
-  title: string;
-  description: String;
-  media: string;
   _id: string;
-  isComplited: boolean;
+  title: string;
+  description: string;
+  media: string;
+  level: level;
   isDone: boolean;
 }
+
 export class UsersActivities {
   _id: string;
-  title: string;
+  week: string;
   activities: Activity[];
+}
+export class CreateActivityDTO {
+  title: string;
+  description: string;
+  media: string;
+  isBorn: boolean;
+  week: [number];
+  level: string;
 }

@@ -41,14 +41,20 @@ export class User {
   ableToChangePassword: Boolean;
 }
 export class Activity {
+  _id: string;
   title: string;
-  description: string;
+  description: String;
   media: string;
-  neededAge: [Number];
+  isComplited: boolean;
+  level: string;
 }
 export class CreateActivityDTO {
   title: string;
   description: string;
   media: string;
-  neededAge: [Number];
+  week: [number];
+  level: string;
+  isBorn: boolean;
+  isDone: boolean;
 }
+export class updateActivityDto {}

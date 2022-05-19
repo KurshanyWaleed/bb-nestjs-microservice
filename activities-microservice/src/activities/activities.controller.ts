@@ -1,4 +1,9 @@
-import { CREATE_ACTIVITIES, GET_ACTIVITIES_OF_WEEK } from './../constantes';
+import {
+  CREATE_ACTIVITIES,
+  GET_ACTIVITIES_OF_WEEK,
+  NEW_ACTIVITY,
+  UPDATE_ACTIVITY,
+} from './../constantes';
 import { CronService } from './cron.service';
 import { ActivitiesService } from './activities.service';
 /*
@@ -9,7 +14,7 @@ import { Body, Controller, Param, Post, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { situation } from 'enum';
 import { GET_USER_ACITIVITES } from '../constantes';
-import { CreateActivityDTO, WeekActivitiesDto } from './model';
+import { CreateActivityDTO, WeekActivitiesDto, WeekDTO } from './model';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -19,16 +24,23 @@ export class ActivitiesController {
     private readonly activityService: ActivitiesService,
     private readonly cron: CronService,
   ) {}
-  // @Post('add-New-Activity/:type')
-  // createActivity(@Body() body: ActivityDTO, @Param('type') type: string) {
-  //   return this.activityService.createActivityService(body, type);
-  // }
-
-  @MessagePattern(CREATE_ACTIVITIES)
-  adminCreateActivity(@Body() body: CreateActivityDTO) {
-    return this.activityService.adminCreateActivityService(body);
+  @Post('add-New-Activity/:type')
+  createActivity(@Body() body: WeekDTO, @Param('type') type: string) {
+    return this.activityService.createActivityService(body, type);
+  }
+  @MessagePattern(NEW_ACTIVITY)
+  adminCreateActivity(payload: CreateActivityDTO) {
+    console.log('from activities:' + payload);
+    return this.activityService.onCreateActivityService(payload);
+  }
+  //!---------------------------------------------------------------------
+  @MessagePattern(UPDATE_ACTIVITY)
+  adminUpdateActivity(payload: { attributes: any; _id: string }) {
+    console.log('from activities:' + payload);
+    return this.activityService.onUpdateActivityService(payload);
   }
 
+  //!---------------------------------------------------------------------
   @MessagePattern(GET_USER_ACITIVITES)
   async getActivities(data: { situation: situation; babyAge: number }) {
     return await this.activityService.getActivitiesService(

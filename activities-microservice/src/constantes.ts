@@ -7,6 +7,8 @@ export const ACTIVITIES_SERVER = 4000;
 
 export const USERS_MS_PORT = 5001;
 export const USERS_SERVER = null;
+export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
+export const UPDATE_ACTIVITY = { cmd: 'UPDATE_ACTIVITY', role: 'admin' };
 
 export const API_GATEWAY_SERVER = 3000;
 export const ESPACE = ' ';

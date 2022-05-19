@@ -2,7 +2,7 @@
 
 export enum Situation {
   EXPECTANT_NEW_BABY = 'EXPECTANT_NEW_BABY',
-  PERENT = 'PERENT',
+  PERENT = 'PARENT',
   PARENT_AND_EXPECTANT_NEW_BABY = 'PARENT_AND_EXPECTANT_NEW_BABY',
 }
 
@@ -13,6 +13,11 @@ export enum UserType {
 export enum BabyGender {
   BOY = 'BOY',
   GIRL = 'GIRL',
+}
+export enum level {
+  EASY = 'EASY',
+  MEDIUM = 'MEDIUM',
+  HARD = 'HARD',
 }
 export enum privilege {
   SUPERADMIN = 'SUPERADMIN',

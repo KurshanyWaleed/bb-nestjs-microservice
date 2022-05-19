@@ -7,7 +7,8 @@ export const FORUM_MS_PORT = 7001;
 
 export const MEMBER = 'MEMBER';
 export const FORUM = 'FORUM';
-export const ADMIN = 'ADMIN';
+export const SUPERADMIN = 'SUPERADMIN';
+
 export const ACTIVITIES = 'ACTIVITIES';
 
 export const local_BASE_URL_USERS = 'http://localhost:3000/api-gateway/users';
@@ -20,6 +21,7 @@ export const REQUEST_TO_JOIN_GROUP = {
   cmd: 'REQUEST_TO_JOIN_GROUP',
   role: 'user',
 };
+
 export const GET_MY_ACTIVITIES = { cmd: 'getMyActivitieis', role: 'user' };
 export const GET_PERMISSION = { cmd: 'get_permission', role: 'user' };
 export const GET_ACTIVITIES_OF_WEEK = { cmd: 'GET_ACTIVITIES_OF_WEEK' };
@@ -39,6 +41,20 @@ export const UPDATE_PASS = { cmd: 'UPDATE_PASS', role: 'user' };
 export const UPERMESSION = { cmd: 'UPDATE_PERMISSION', role: 'email' };
 export const CONFIRM_ACCOUNT = { cmd: 'CONFIRM_ACCOUNT', role: 'email' };
 export const UPDATE_PASS_DATA = { cmd: 'UPDATE_PASS_DATA', role: 'user' };
+export const UPDATE_ACTIVITY = { cmd: 'UPDATE_ACTIVITY', role: 'admin' };
+
+export const ANSWER_QUESTION = { cmd: 'ANSWER_QUESTION', role: 'user/admin' };
+export const NEW_QUESTION = { cmd: 'NEW_QUESTION', role: 'user/admin' };
+export const UPDATE_QUESTION = { cmd: 'UPDATE_QUESTION', role: 'user/admin' };
+export const DELETE_QUESTION = { cmd: 'DELETE_QUESTION', role: 'user/admin' };
+export const GET_QUESTION_BY_ID = {
+  cmd: ' GET_QUESTION_BY_ID',
+  role: 'user/admin',
+};
+export const GET_ALL_QUESTIONS = {
+  cmd: 'GET_ALL_QUESTIONS',
+  role: 'user/admin',
+};
 
 export const GET_USER_ACITIVITES = {
   cmd: 'GET_USER_ACITIVITES',
