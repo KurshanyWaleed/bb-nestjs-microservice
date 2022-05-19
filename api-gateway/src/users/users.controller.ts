@@ -13,6 +13,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Redirect,
   Render,
   Req,
@@ -202,10 +203,10 @@ export class UsersController {
   //! get questions
 
   @Get('get-questions')
-  getQustions(@Req() req: Request) {
+  getQustions(@Req() req: Request, @Query('question') abc) {
     const token = req.headers.authorization.split(ESPACE)[1];
     try {
-      return this.userServices.getAllQuestionsService(token);
+      return this.userServices.getAllQuestionsService(token, abc);
     } catch (e) {
       return new UnauthorizedException();
     }

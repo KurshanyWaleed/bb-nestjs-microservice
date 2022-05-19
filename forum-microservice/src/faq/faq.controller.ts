@@ -45,8 +45,9 @@ export class FaqController {
     return this.faqService.GetQuestionByIdService(id_question);
   }
   @MessagePattern(GET_ALL_QUESTIONS)
-  getAllQuestion(role: string) {
-    return this.faqService.GetAllQuestionsService(role);
+  getAllQuestion({ role, abc }) {
+    console.log(abc);
+    return this.faqService.GetAllQuestionsService(role, abc);
   }
 
   @MessagePattern(DELETE_QUESTION)

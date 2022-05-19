@@ -517,12 +517,12 @@ export class UsersService {
 
   //   };
   //!------------------------------------------[here]5
-  async getAllQuestionsService(token: string) {
+  async getAllQuestionsService({ token, abc }) {
     const decoded = this.jwt.decode(token);
     const user = decoded as Token;
     return this.service.sendThisDataToMicroService(
       GET_ALL_QUESTIONS,
-      user.role,
+      { role: user.role, abc },
       FORUM,
     );
   }

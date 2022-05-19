@@ -223,8 +223,11 @@ export class UsersController {
   }
 
   @MessagePattern(GET_ALL_QUESTIONS)
-  getAllQuestions(token: string) {
-    return this.userService.getAllQuestionsService(token);
+  getAllQuestions({ token, abc }) {
+    return this.userService.getAllQuestionsService({
+      token,
+      abc,
+    });
   }
 
   //todo get question By ID

@@ -52,15 +52,23 @@ export class FaqService {
       return { message: 'this ' + id_question + ' does not existe' };
     }
   }
-  async GetAllQuestionsService(role: string) {
-    console.log(role);
+  async GetAllQuestionsService(role: string, abc: string) {
     switch (role) {
       case privilege.SUPERADMIN:
         return await this.questionModel.find();
       case privilege.SCIENTIST:
         return await this.questionModel.find();
       case privilege.MEMEBER:
-        return await this.questionModel.find({ requested: false });
+        const val = (
+          await this.questionModel.find({ requested: false })
+        ).filter((qst) => {
+          return (
+            qst.content.slice(0, abc.length).toLocaleLowerCase() ==
+            abc.toLocaleLowerCase()
+          );
+        });
+
+        return val;
       default:
         return { message: 'something wont wrong' };
     }

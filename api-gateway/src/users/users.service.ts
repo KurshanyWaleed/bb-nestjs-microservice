@@ -217,10 +217,10 @@ export class UsersService {
   }
   //get all questions
 
-  getAllQuestionsService(token: string) {
+  getAllQuestionsService(token: string, abc: string) {
     return this.service.sendThisDataToMicroService(
       GET_ALL_QUESTIONS,
-      token,
+      { token, abc },
       USERS,
     );
   }
