@@ -18,17 +18,19 @@ import {
   GET_PERMISSION,
   GET_USER_INFO,
   GET_ME,
-  ACTIVITIES_OF_WEEK,
   GET_MY_ACTIVITIES,
-  ESPACE,
   NEW_ACTIVITY,
   UPDATE_ACTIVITY,
   NEW_QUESTION,
   UPDATE_QUESTION,
   GET_ALL_QUESTIONS,
   DELETE_QUESTION,
-  ANSWER_QUESTION,
   GET_QUESTION_BY_ID,
+  CREATE_INFORMATION,
+  DELETE_INFORMATION,
+  EDIT_INFORMATION,
+  GET_INFORMATIONS,
+  GET_ONE_INFORMATION,
 } from './utils/constantes';
 import {
   Controller,
@@ -195,7 +197,46 @@ export class UsersController {
     console.log(payload);
     return this.userService.updateActivitie(payload);
   }
+  //todo --------------------------------------------information
+  @MessagePattern(CREATE_INFORMATION)
+  createNewInformationController({ token, title, section, content, media }) {
+    return this.userService.createNewInformationService(token, {
+      title,
+      section,
+      content,
+      media,
+    });
+  }
+  //********** */
+
+  @MessagePattern(DELETE_INFORMATION)
+  deleteInforamtionController({ token, id_information }) {
+    return this.userService.deleteInforamtionService(token, id_information);
+  }
+  //*************** */
+
+  @MessagePattern(EDIT_INFORMATION)
+  editeINforamtionController({ token, id_information, attributes }) {
+    return this.userService.editeInforamtionService(
+      token,
+      id_information,
+      attributes,
+    );
+  }
+  //************** */
+
+  @MessagePattern(GET_INFORMATIONS)
+  getInfomrationsController({ token, information }) {
+    return this.userService.getInfomrationsService(token, information);
+  }
+  //**************** */
+
+  @MessagePattern(GET_ONE_INFORMATION)
+  getOneInfromationByIdController({ token, id_information }) {
+    return this.userService.getOneInfromationByIdService(token, id_information);
+  }
   //?----------------------------------------FAQ
+
   @MessagePattern(NEW_QUESTION)
   createNewQuestion(payload: {
     token: string;

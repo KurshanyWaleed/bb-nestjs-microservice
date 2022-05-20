@@ -21,6 +21,18 @@ export const GET_ALL_QUESTIONS = {
   role: 'user/admin',
 };
 
+export const CREATE_INFORMATION = { cmd: 'CREATE_INFORMATION', role: 'admin' };
+export const DELETE_INFORMATION = { cmd: 'DELETE_INFORMATION', role: 'admin' };
+export const GET_ONE_INFORMATION = {
+  cmd: 'GET_ONE_INFORMATION',
+  role: 'admin',
+};
+export const GET_INFORMATIONS = {
+  cmd: 'GET_INFORMATIONS',
+  role: 'admin/member',
+};
+export const EDIT_INFORMATION = { cmd: 'EDIT_INFORMATION', role: 'admin' };
+
 export const GET_ALL_USERS = { cmd: 'getAllUser', role: 'user/admin' };
 export const GET_USER = { cmd: 'get_user', role: 'user/admin' };
 export const INSCRI_ADMIN = { cmd: 'inscriptionAdmin', role: 'user' };

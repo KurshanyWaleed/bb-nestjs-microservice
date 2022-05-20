@@ -28,7 +28,7 @@ import {
   LogInDto,
 } from './../models/users.dto';
 import { GroupDto } from 'src/models/group.dto';
-import { Activity, CreateActivityDTO } from 'src/models/users.model';
+import { CreateActivityDTO } from 'src/models/users.model';
 
 @Controller('users')
 export class UsersController {
@@ -126,7 +126,7 @@ export class UsersController {
     const requestPayload = { token: token, groupTitle: groupTitle };
     return this.userServices.joinGroup(requestPayload);
   }
-
+  //todo ----------------------------------------------------- API Informations---------------------------------------------------
   //------------------------------------ administartion ------<<<>>>
   @Post('admin/sign-up')
   @UsePipes(ValidationPipe)
@@ -181,6 +181,93 @@ export class UsersController {
 
     return this.userServices.updateActivity(payload);
   }
+  //todo -----------------------------------------------------------------------information API
+  @Post('create-information')
+  createNewInformationController(
+    @Req() req: Request,
+    @Body() { title, section, content, media },
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+
+      return this.userServices.createNewInformationService(token, {
+        title,
+        section,
+        content,
+        media,
+      });
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //********** */
+
+  @Delete('delete-information/:id')
+  deleteInforamtionController(
+    @Req() req: Request,
+    @Param('id') id_information: string,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.deleteInforamtionService(token, id_information);
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //*************** */
+
+  //!------------------------------*[here]*  :D
+  @Put('edit-information/:id')
+  editeINforamtionController(
+    @Req() req: Request,
+    @Param('id') id_information: string,
+    @Body() attributes: any,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+
+      return this.userServices.editeINforamtionService(
+        token,
+        id_information,
+        attributes,
+      );
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //************** */
+
+  @Get('get-informations')
+  getInfomrationsController(
+    @Req() req: Request,
+    @Query('question') information: string,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.getInfomrationsService(token, information);
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+
+  //**************** */
+
+  @Get('get-information/:id')
+  getOneInfromationByIdController(
+    @Req() req: Request,
+    @Param('id') id_information: string,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+
+      return this.userServices.getOneInfromationByIdService(
+        token,
+        id_information,
+      );
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
   //?-----------------------------------------------------------FAQ
   //! add qustion
 
@@ -203,7 +290,7 @@ export class UsersController {
   //! get questions
 
   @Get('get-questions')
-  getQustions(@Req() req: Request, @Query('question') abc) {
+  getQustions(@Req() req: Request, @Query('question') abc: string) {
     const token = req.headers.authorization.split(ESPACE)[1];
     try {
       return this.userServices.getAllQuestionsService(token, abc);

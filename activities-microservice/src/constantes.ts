@@ -10,6 +10,18 @@ export const USERS_SERVER = null;
 export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
 export const UPDATE_ACTIVITY = { cmd: 'UPDATE_ACTIVITY', role: 'admin' };
 
+export const CREATE_INFORMATION = { cmd: 'CREATE_INFORMATION', role: 'admin' };
+export const DELETE_INFORMATION = { cmd: 'DELETE_INFORMATION', role: 'admin' };
+export const GET_ONE_INFORMATION = {
+  cmd: 'GET_ONE_INFORMATION',
+  role: 'admin',
+};
+export const GET_INFORMATIONS = {
+  cmd: 'GET_INFORMATIONS',
+  role: 'admin/member',
+};
+export const EDIT_INFORMATION = { cmd: 'EDIT_INFORMATION', role: 'admin' };
+
 export const API_GATEWAY_SERVER = 3000;
 export const ESPACE = ' ';
 export const USERS = 'USERS';

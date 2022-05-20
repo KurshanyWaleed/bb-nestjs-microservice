@@ -40,6 +40,11 @@ import {
   GET_ALL_QUESTIONS,
   GET_QUESTION_BY_ID,
   ANSWER_QUESTION,
+  CREATE_INFORMATION,
+  DELETE_INFORMATION,
+  EDIT_INFORMATION,
+  GET_ONE_INFORMATION,
+  GET_INFORMATIONS,
 } from './../utils/constantes';
 
 @Injectable()
@@ -195,11 +200,55 @@ export class UsersService {
       USERS,
     );
   }
-  //!------------------------------*[here]*  :D
   updateActivity(payload: { token: string; attributes: any; _id: string }) {
     return this.service.sendThisDataToMicroService(
       UPDATE_ACTIVITY,
       payload,
+      USERS,
+    );
+  }
+  //todo ------------------------------------information
+  createNewInformationService(
+    token: string,
+    { title, section, content, media },
+  ) {
+    return this.service.sendThisDataToMicroService(
+      CREATE_INFORMATION,
+      { token, title, section, content, media },
+      USERS,
+    );
+  }
+  //!------------------------------*[here]*  :D
+  deleteInforamtionService(token: string, id_information: string) {
+    return this.service.sendThisDataToMicroService(
+      DELETE_INFORMATION,
+      { token, id_information },
+      USERS,
+    );
+  }
+  editeINforamtionService(
+    token: string,
+    id_information: string,
+    attributes: any,
+  ) {
+   
+    return this.service.sendThisDataToMicroService(
+      EDIT_INFORMATION,
+      { token, id_information, attributes },
+      USERS,
+    );
+  }
+  getOneInfromationByIdService(token: string, id_information: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_ONE_INFORMATION,
+      { token, id_information },
+      USERS,
+    );
+  }
+  getInfomrationsService(token: string, information: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_INFORMATIONS,
+      { token, information },
       USERS,
     );
   }

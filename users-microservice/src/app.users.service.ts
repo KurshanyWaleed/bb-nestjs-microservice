@@ -19,6 +19,11 @@ import {
   GET_QUESTION_BY_ID,
   GET_ALL_QUESTIONS,
   DELETE_QUESTION,
+  CREATE_INFORMATION,
+  DELETE_INFORMATION,
+  EDIT_INFORMATION,
+  GET_INFORMATIONS,
+  GET_ONE_INFORMATION,
 } from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
@@ -135,8 +140,9 @@ export class UsersService {
             ACTIVITIES,
           )
           .subscribe(async (newdata) => {
-            console.log('ttttttttttttttttttttttt' + (await newdata));
+            console.log('ttttttttttttttttttttttt' + { newdata });
             this.userActivities = await newdata;
+            return newdata;
           });
         console.log('out' + this.userActivities);
         try {
@@ -457,6 +463,83 @@ export class UsersService {
       );
     } else {
       return { message: 'access_denied' };
+    }
+  }
+  //todo --------------------------------------------Information
+  async createNewInformationService(
+    token: string,
+    { title, section, content, media },
+  ) {
+    const previ = await this.onUserAnalyse(token);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        CREATE_INFORMATION,
+        { title, section, content, media },
+        ACTIVITIES,
+      );
+    } else {
+      return new UnauthorizedException('access denied');
+    }
+  }
+  async deleteInforamtionService(token: string, id_information: string) {
+    const previ = await this.onUserAnalyse(token);
+    console.log(previ);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        DELETE_INFORMATION,
+        id_information,
+        ACTIVITIES,
+      );
+    } else {
+      return new UnauthorizedException('access denied');
+    }
+  }
+  async editeInforamtionService(
+    token: string,
+    id_information: string,
+    attributes: any,
+  ) {
+    const previ = await this.onUserAnalyse(token);
+    console.log('llllllll ' + token);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        EDIT_INFORMATION,
+        { id_information, attributes },
+        ACTIVITIES,
+      );
+    } else {
+      return new UnauthorizedException('access denied');
+    }
+  }
+  async getInfomrationsService(token: string, information?: string) {
+    const previ = await this.onUserAnalyse(token);
+    console.log(previ);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        GET_INFORMATIONS,
+        information ?? {},
+        ACTIVITIES,
+      );
+    } else {
+      return new UnauthorizedException('access denied');
+    }
+  }
+  //! ---------------------------here
+  async getOneInfromationByIdService(token: string, id_information: string) {
+    const previ = await this.onUserAnalyse(token);
+    console.log(previ);
+    if (
+      previ == privilege.SCIENTIST ||
+      previ == privilege.SUPERADMIN ||
+      previ == privilege.MEMEBER
+    ) {
+      return this.service.sendThisDataToMicroService(
+        GET_ONE_INFORMATION,
+        id_information,
+        ACTIVITIES,
+      );
+    } else {
+      return new UnauthorizedException('access denied');
     }
   }
   //?------------------------------------------------FAQ

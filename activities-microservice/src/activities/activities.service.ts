@@ -86,14 +86,8 @@ export class ActivitiesService {
     if (sit == situation.EXPECTANT_NEW_BABY) {
       const data = (await this.ActivityBBModel.find({})).filter(
         (weeks) => Number(weeks.week.split(ESPACE)[1]) >= Number(babyAge / 7),
-      )[0];
-      const act = {
-        week: data.week,
-        activities: data.activities
-          .filter((actv) => actv.level == 'EASY')
-          .slice(0, 3),
-      };
-      return act;
+      );
+      return data;
 
       //
       //
@@ -102,26 +96,24 @@ export class ActivitiesService {
       //
     } else if (sit == situation.PARENT) {
       const data = (await this.ActivityABModel.find({})).filter(
-        (weeks) => Number(weeks.week.split(ESPACE)[1]) >= Number(babyAge / 7),
-      )[0];
-      const act = {
-        week: data.week,
-        activities: data.activities
-          .filter((actv) => actv.level == 'EASY')
-          .slice(0, 3),
-      };
+        (weeks) => Number(weeks.week.split(ESPACE)[1]) <= Number(babyAge / 7),
+      );
 
-      return act;
+      // const act = {
+      //   week: data.week,
+      //   activities: data.activities
+      //     .filter((actv) => actv.level == 'EASY')
+      //     .slice(0, 3),
+      // };
+
+      console.log(data.length);
+      return data;
     } else if (sit == situation.PARENT_AND_EXPECTANT_NEW_BABY) {
       const data = (await this.ActivityBBModel.find({})).filter(
-        (weeks) => Number(weeks.week.split(ESPACE)[1]) >= Number(babyAge / 7),
-      )[0];
-      const act = {
-        week: data.week,
-        activities: data.activities.filter((actv) => actv.level == 'EASY'),
-      };
+        (weeks) => Number(weeks.week.split(ESPACE)[1]) <= Number(babyAge / 7),
+      );
 
-      return act;
+      return data;
     }
   }
   async handelIncomminData(payload: WeekActivitiesDto) {
