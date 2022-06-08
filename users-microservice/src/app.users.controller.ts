@@ -31,6 +31,10 @@ import {
   EDIT_INFORMATION,
   GET_INFORMATIONS,
   GET_ONE_INFORMATION,
+  CREATE_POST,
+  GET_GROUPS,
+  GET_ONE_GROUP,
+  EDIT_GROUP,
 } from './utils/constantes';
 import {
   Controller,
@@ -167,19 +171,39 @@ export class UsersController {
     return this.userService.user_id(data._id, data.token);
   }
   //---------------------------------------admin
-
+  //todo ------------------------------------Group
   @MessagePattern(NEW_GROUP)
   async privilegeAlayzer(data: { token: string; clientInformation: any }) {
     return this.userService.creategroup(data.token, data.clientInformation);
   }
   @MessagePattern(REQUEST_TO_JOIN_GROUP)
-  async joinGroupRequest(payload: { token: string; groupTitle: string }) {
-    console.log('huser controller : ' + payload.groupTitle);
+  async joinGroupRequest({ token, _id }) {
+    console.log('huser controller : ' + _id);
     return this.userService.joinRequestService({
-      token: payload.token,
-      groupTitle: payload.groupTitle,
+      token: token,
+      _id: _id,
     });
   }
+
+  @MessagePattern(GET_GROUPS)
+  getGroupsController({ token, groupTitle }) {
+    return this.userService.getGroupsService({ token, groupTitle });
+  }
+  @MessagePattern(GET_ONE_GROUP)
+  getOneGroupController({ token, group_id }) {
+    return this.userService.getOneGroupService({ token, group_id });
+  }
+
+  @MessagePattern(EDIT_GROUP)
+  editgroupController({ token, group_id, attributes }) {
+    return this.userService.editgroupService({ token, group_id, attributes });
+  }
+
+  @MessagePattern(CREATE_POST)
+  createPostService({ token, group, content, media }) {
+    return this.userService.createPostService({ token, group, content, media });
+  }
+
   @MessagePattern(NEW_ACTIVITY)
   async createActivity(payload: {
     token: string;

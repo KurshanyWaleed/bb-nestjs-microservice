@@ -12,7 +12,6 @@ https://docs.nestjs.com/controllers#controllers
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { NEW_QUESTION } from 'src/constantes';
-import { identity } from 'rxjs';
 
 @Controller()
 export class FaqController {

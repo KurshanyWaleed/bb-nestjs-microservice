@@ -23,5 +23,10 @@ export const REQUEST_TO_JOIN_GROUP = {
   cmd: 'REQUEST_TO_JOIN_GROUP',
   role: 'user',
 };
-
 export const USERS = 'USERS';
+
+export const GET_ONE_GROUP = { cmd: 'GET_ONE_GROUP', role: 'user' };
+export const GET_GROUPS = { cmd: 'GET_GROUPS', role: 'user' };
+export const CREATE_POST = { cmd: 'CREATE_POST', role: 'admin' };
+export const CREATE_REPLY = { cmd: 'CREATE_REPLY', role: 'member' };
+export const EDIT_GROUP = { cmd: 'EDIT_GROUP', role: 'admin' };

@@ -75,3 +75,8 @@ export const GET_INFORMATIONS = {
   role: 'admin/member',
 };
 export const EDIT_INFORMATION = { cmd: 'EDIT_INFORMATION', role: 'admin' };
+export const CREATE_POST = { cmd: 'CREATE_POST', role: 'admin' };
+export const CREATE_REPLY = { cmd: 'CREATE_REPLY', role: 'member' };
+export const GET_ONE_GROUP = { cmd: 'GET_ONE_GROUP', role: 'user' };
+export const GET_GROUPS = { cmd: 'GET_GROUPS', role: 'user' };
+export const EDIT_GROUP = { cmd: 'EDIT_GROUP', role: 'admin' };

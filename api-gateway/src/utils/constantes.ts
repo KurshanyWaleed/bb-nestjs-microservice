@@ -69,3 +69,8 @@ export const NEW_GROUP = { cmd: 'ADD_NEW_GROUP', role: 'user/admin' };
 export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
 export const UPDATE_ACTIVITY = { cmd: 'UPDATE_ACTIVITY', role: 'admin' };
 export const USER_VERIFY = { cmd: 'ANALYSER', role: '' };
+
+export const GET_ONE_GROUP = { cmd: 'GET_ONE_GROUP', role: 'user' };
+export const GET_GROUPS = { cmd: 'GET_GROUPS', role: 'user' };
+export const EDIT_GROUP = { cmd: 'EDIT_GROUP', role: 'admin' };
+export const CREATE_POST = { cmd: 'CREATE_POST', role: 'admin' };

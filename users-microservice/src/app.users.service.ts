@@ -24,6 +24,10 @@ import {
   EDIT_INFORMATION,
   GET_INFORMATIONS,
   GET_ONE_INFORMATION,
+  CREATE_POST,
+  GET_GROUPS,
+  GET_ONE_GROUP,
+  EDIT_GROUP,
 } from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
@@ -406,9 +410,10 @@ export class UsersService {
       return 'error';
     }
   }
+  //todo ---------------------------------group
   async creategroup(token: string, newGroup: GroupDto) {
     const previ = await this.onUserAnalyse(token);
-    if (previ == privilege.SUPERADMIN) {
+    if (!(previ == 'error')) {
       return this.service.sendThisDataToMicroService(
         NEW_GROUP,
         newGroup,
@@ -418,11 +423,43 @@ export class UsersService {
       return { message: 'access_denied' };
     }
   }
-  async joinRequestService(payload: { token: string; groupTitle: string }) {
+  async getGroupsService({ token, groupTitle }) {
+    const previ = await this.onUserAnalyse(token);
+    if (!(previ == 'error')) {
+      return this.service.sendThisDataToMicroService(
+        GET_GROUPS,
+        groupTitle,
+        FORUM,
+      );
+    }
+  }
+  async getOneGroupService({ token, group_id }) {
+    const previ = await this.onUserAnalyse(token);
+    if (!(previ == 'error')) {
+      console.log(group_id);
+      return this.service.sendThisDataToMicroService(
+        GET_ONE_GROUP,
+        group_id,
+        FORUM,
+      );
+    }
+  }
+  async editgroupService({ token, group_id, attributes }) {
+    const previ = await this.onUserAnalyse(token);
+    if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
+      return this.service.sendThisDataToMicroService(
+        EDIT_GROUP,
+        { group_id, attributes },
+        FORUM,
+      );
+    }
+  }
+  async joinRequestService(payload: { token: string; _id: string }) {
     const previlege = await this.onUserAnalyse(payload.token);
     const decoded = this.jwt.decode(payload.token);
     const user = decoded as Token;
-    const requestPayload = { _id: user._id, groupTitle: payload.groupTitle };
+    console.log(payload._id);
+    const requestPayload = { _id: user._id, group_id: payload._id };
     if (previlege == MEMBER) {
       return this.service.sendThisDataToMicroService(
         REQUEST_TO_JOIN_GROUP,
@@ -433,6 +470,20 @@ export class UsersService {
       return { message: 'Please try to sign-in first then try again ' };
     }
   }
+  async createPostService({ token, group, content, media }) {
+    const previ = await this.onUserAnalyse(token);
+    const decoded = this.jwt.decode(token);
+    const user = decoded as Token;
+    if (previ == privilege.SUPERADMIN || previ == privilege.SCIENTIST) {
+      return this.service.sendThisDataToMicroService(
+        CREATE_POST,
+        { from: user._id, group, content, media },
+        FORUM,
+      );
+    }
+  }
+
+  //todo--------------------------------------
   async createActivitie(payload: {
     token: string;
     newActivity: CreateActivityDTO;
@@ -500,7 +551,7 @@ export class UsersService {
     attributes: any,
   ) {
     const previ = await this.onUserAnalyse(token);
-    console.log('llllllll ' + token);
+
     if (previ == privilege.SCIENTIST || previ == privilege.SUPERADMIN) {
       return this.service.sendThisDataToMicroService(
         EDIT_INFORMATION,

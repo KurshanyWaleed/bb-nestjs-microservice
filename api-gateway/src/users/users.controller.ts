@@ -29,6 +29,7 @@ import {
 } from './../models/users.dto';
 import { GroupDto } from 'src/models/group.dto';
 import { CreateActivityDTO } from 'src/models/users.model';
+import { group } from 'console';
 
 @Controller('users')
 export class UsersController {
@@ -119,13 +120,53 @@ export class UsersController {
   }
 
   //?  : ----Group : Join Group-----------------------------*->
-  @Get('join/group/:title')
-  joinGroup(@Param('title') groupTitle: string, @Req() req: Request) {
+  @Get('join/group/:id')
+  joinGroup(@Param('id') _id: string, @Req() req: Request) {
     const token = req.headers.authorization.split(ESPACE)[1];
-    console.log(groupTitle);
-    const requestPayload = { token: token, groupTitle: groupTitle };
+    console.log(_id);
+    const requestPayload = { token: token, _id };
     return this.userServices.joinGroup(requestPayload);
   }
+
+  @Post('edit-group/:id_group')
+  editGroupController(
+    @Param('id_group') group_id: string,
+    @Req() req: Request,
+    @Body() attributes: any,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.editGroupService(token, group_id, attributes);
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  @Get('get-group/:id_group')
+  getOneGroupController(
+    @Param('id_group') group_id: string,
+    @Req() req: Request,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.getOneGroupService(token, group_id);
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+
+  @Post('get-groups')
+  getGroupsController(
+    @Query('group-title') group_title: string,
+    @Req() req: Request,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+      return this.userServices.getGroupsService(token, group_title);
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+
   //todo ----------------------------------------------------- API Informations---------------------------------------------------
   //------------------------------------ administartion ------<<<>>>
   @Post('admin/sign-up')
@@ -154,6 +195,27 @@ export class UsersController {
       return this.userServices.creategroup({
         token,
         clientInformation,
+      });
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  //todo post postes
+  @Post('create-post/:id_group')
+  createNewPost(
+    @Param('id_group') group: string,
+    @Body()
+    { content, media },
+    @Req() req: Request,
+  ) {
+    try {
+      const token = req.headers.authorization.split(ESPACE)[1];
+
+      return this.userServices.createPostService({
+        token,
+        group,
+        content,
+        media,
       });
     } catch (e) {
       return new UnauthorizedException();

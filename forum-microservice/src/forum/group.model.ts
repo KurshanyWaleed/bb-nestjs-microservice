@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { Post } from './post.model';
-
 import { User } from './user.model';
 
 export const ActivitySchema = new mongoose.Schema(
@@ -20,13 +19,12 @@ export const groupSchema = new mongoose.Schema(
     discription: { type: String, default: '' },
     media: { type: String, default: '' },
     coverPhoto: { type: String, default: '' },
-    posts: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
-    NoM: { type: Number, default: 0 },
+    postes: { type: [mongoose.Schema.Types.ObjectId], ref: 'Post' },
+
     members: {
       type: [mongoose.Schema.Types.ObjectId],
-      required: true,
-      unique: true,
-      ref: 'User',
+      unique: false,
+      ref: 'user',
     },
   },
   { timestamps: true },
@@ -38,6 +36,5 @@ export class Group {
   media: string;
   coverPhoto: string;
   members: [User];
-  NoM: number;
   posts: [Post];
 }

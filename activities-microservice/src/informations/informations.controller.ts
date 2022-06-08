@@ -39,7 +39,7 @@ export class InformationsController {
     );
   }
   @MessagePattern(GET_INFORMATIONS)
-  getInfomrationsController(information) {
+  getInfomrationsController(information?: string) {
     return this.informationService.getInfomrationsService(information);
   }
   @MessagePattern(GET_ONE_INFORMATION)

@@ -45,6 +45,10 @@ import {
   EDIT_INFORMATION,
   GET_ONE_INFORMATION,
   GET_INFORMATIONS,
+  CREATE_POST,
+  GET_GROUPS,
+  GET_ONE_GROUP,
+  EDIT_GROUP,
 } from './../utils/constantes';
 
 @Injectable()
@@ -61,7 +65,7 @@ export class UsersService {
     );
   }
 
-  async joinGroup(payload: { token: string; groupTitle: string }) {
+  async joinGroup(payload: { token: string; _id: string }) {
     return this.service.sendThisDataToMicroService(
       REQUEST_TO_JOIN_GROUP,
       payload,
@@ -189,6 +193,7 @@ export class UsersService {
       USERS,
     );
   }
+  //todo ----------------------------------Group
   async creategroup(data: { token: string; clientInformation: any }) {
     return this.service.sendThisDataToMicroService(NEW_GROUP, data, USERS);
   }
@@ -200,6 +205,38 @@ export class UsersService {
       USERS,
     );
   }
+  getGroupsService(token: string, groupTitle?: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_GROUPS,
+      { token, groupTitle },
+      USERS,
+    );
+  }
+
+  getOneGroupService(token: string, group_id: string) {
+    return this.service.sendThisDataToMicroService(
+      GET_ONE_GROUP,
+      { token, group_id },
+      USERS,
+    );
+  }
+
+  editGroupService(token: string, group_id: string, attributes: string) {
+    return this.service.sendThisDataToMicroService(
+      EDIT_GROUP,
+      { token, group_id, attributes },
+      USERS,
+    );
+  }
+
+  createPostService({ token, group, content, media }) {
+    return this.service.sendThisDataToMicroService(
+      CREATE_POST,
+      { token, group, content, media },
+      USERS,
+    );
+  }
+  //------------------------------
   updateActivity(payload: { token: string; attributes: any; _id: string }) {
     return this.service.sendThisDataToMicroService(
       UPDATE_ACTIVITY,
@@ -231,7 +268,6 @@ export class UsersService {
     id_information: string,
     attributes: any,
   ) {
-   
     return this.service.sendThisDataToMicroService(
       EDIT_INFORMATION,
       { token, id_information, attributes },

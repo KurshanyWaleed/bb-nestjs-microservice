@@ -10,6 +10,11 @@ export enum privilege {
 }
 export enum level {
   EASY = 'EASY',
-  MEDIUM = 'MEDIUM',
-  HARD = 'HARD',
+  MODERATE = 'MODERATE',
+  WITH_EFFORT = 'WITH_EFFORT',
+}
+export enum rating {
+  NORMAL = 'NORMAL',
+  NICE = 'NICE',
+  VERY_GREAT = 'VERY_GREAT',
 }

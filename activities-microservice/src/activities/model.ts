@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { level } from './enum';
+import { level, rating } from './enum';
 export const AFTER_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   {
     week: { type: String },
@@ -22,8 +22,9 @@ export const ACTIVITIES_SCHEMA = new mongoose.Schema(
     title: { type: String },
     description: { type: String },
     media: { type: String },
-    level: { type: String, enuml: level, default: level.EASY },
+    level: { type: String, enum: level, default: level.EASY },
     isDone: { type: Boolean, default: false },
+    rating: { type: String, enum: rating, default: rating.NICE },
   },
 
   { timestamps: true },
@@ -37,7 +38,7 @@ export const BEFORE_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
           title: { type: String },
           description: { type: String },
           media: { type: String },
-          level: { type: String, enuml: level, default: level.EASY },
+          level: { type: String, enum: level, default: level.EASY },
           isDone: { type: Boolean, default: false },
         },
       ],
