@@ -5,6 +5,7 @@ import {
   UserType,
   privilege,
   level,
+  rating,
 } from './../utils/enum';
 import mongoose from 'mongoose';
 export class Token {
@@ -15,12 +16,31 @@ export class Token {
   exp: string;
 }
 
+export const FEEDBACK_SCHEMA = new mongoose.Schema({
+  id_activity: { type: String },
+  id_week: { type: String },
+  id_user: { type: String },
+  level: { type: String, enum: level, default: level.EASY },
+  reactions: { type: String },
+  rating: { type: String, enum: rating, default: rating.NICE },
+});
+
+export class Feedback {
+  id_activity: string;
+  id_week: string;
+  id_user: string;
+  level: level;
+  rating: rating;
+  reactions: string;
+}
 export const ActivitySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String },
-    isComplited: { type: Boolean, default: false },
     media: { type: String },
+    idDone: { type: Boolean },
+    rating: { type: String, enum: rating },
+    reactions: { type: String, default: '' },
     level: { type: String, default: level.EASY, enum: level },
   },
   { timestamps: true },

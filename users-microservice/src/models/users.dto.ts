@@ -1,5 +1,12 @@
 import { IsEmail, IsEmpty, IsNotEmpty, Length } from 'class-validator';
-import { BabyGender, privilege, Situation, UserType } from 'src/utils/enum';
+import {
+  BabyGender,
+  level,
+  privilege,
+  rating,
+  Situation,
+  UserType,
+} from 'src/utils/enum';
 
 export class adminDto {
   @IsNotEmpty()
@@ -13,6 +20,15 @@ export class adminDto {
 export class RefreshTokenDto {
   @IsNotEmpty()
   token: string;
+}
+
+export class FeedbackDto {
+  id_week: string;
+  id_activity: string;
+  id_user: string;
+  reactions: string;
+  level: level;
+  rating: rating;
 }
 
 export class LogInDto {

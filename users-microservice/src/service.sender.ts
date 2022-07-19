@@ -39,7 +39,16 @@ export class ServiceSender
         return null;
     }
   }
-
+  emitThisDataToMicroService(pattern: any, data: any, service: string) {
+    switch (service) {
+      case ACTIVITIES:
+        return this.activitiesService.emit(pattern, data);
+      case FORUM:
+        return this.forumService.emit(pattern, data);
+      default:
+        return null;
+    }
+  }
   async onApplicationBootstrap() {
     await this.activitiesService
       .connect()

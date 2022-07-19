@@ -1,4 +1,4 @@
-import { level } from 'src/utils/enum';
+import { level, rating } from 'src/utils/enum';
 
 export class Activity {
   _id: string;
@@ -6,6 +6,8 @@ export class Activity {
   description: string;
   media: string;
   level: level;
+  rating: rating;
+  reaction: string;
   isDone: boolean;
 }
 
@@ -20,5 +22,4 @@ export class CreateActivityDTO {
   media: string;
   isBorn: boolean;
   week: [number];
-  level: string;
 }

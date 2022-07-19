@@ -51,6 +51,11 @@ export const UPERMESSION = { cmd: 'UPDATE_PERMISSION', role: 'email' };
 export const CONFIRM_ACCOUNT = { cmd: 'CONFIRM_ACCOUNT', role: 'email' };
 export const GET_ME = { cmd: 'getMe', role: 'user' };
 export const GET_MY_ACTIVITIES = { cmd: 'getMyActivitieis', role: 'user' };
+export const POST_FEEDBACK = { cmd: 'POST_FEEDBACK', role: 'membre' };
+
+export const GET_FEEDBACK = { cmd: 'GET_FEEDBACK', role: 'membre' };
+export const GET_FEEDBACK_BY_ID = { cmd: 'GET_FEEDBACK_BY_ID', role: 'membre' };
+
 export const local_BASE_URL_USERS = 'http://localhost:3000/api-gateway/users/';
 
 export const ng_BASE_URL_USERS =

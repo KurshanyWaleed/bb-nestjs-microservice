@@ -35,6 +35,9 @@ import {
   GET_GROUPS,
   GET_ONE_GROUP,
   EDIT_GROUP,
+  POST_FEEDBACK,
+  GET_FEEDBACK,
+  GET_FEEDBACK_BY_ID,
 } from './utils/constantes';
 import {
   Controller,
@@ -47,6 +50,7 @@ import { UsersService } from './app.users.service';
 import {
   adminDto,
   ConfirmEmailToUpadatePasswordDto,
+  FeedbackDto,
   inscriptionDto,
 } from './models/users.dto';
 import { User } from './models/users.model';
@@ -165,7 +169,25 @@ export class UsersController {
   getMyActivities(token: string) {
     return this.userService.activitiesByToken(token);
   }
+  @MessagePattern(POST_FEEDBACK)
+  postActivityFeedbackController(payload: {
+    token: string;
+    feedback: FeedbackDto;
+  }) {
+    return this.userService.postActivityFeedbackService(
+      payload.token,
+      payload.feedback,
+    );
+  }
+  @MessagePattern(GET_FEEDBACK)
+  getActivityFeedbacksController(token: string) {
+    return this.userService.getActivityFeedbacksService(token);
+  }
 
+  @MessagePattern(GET_FEEDBACK_BY_ID)
+  getActivityFeedbackByIdUserController(token: string) {
+    return this.userService.getActivityFeedbackByUserIdService(token);
+  }
   @MessagePattern(GET_USER_INFO)
   getUser(data: { _id: string; token: string }) {
     return this.userService.user_id(data._id, data.token);

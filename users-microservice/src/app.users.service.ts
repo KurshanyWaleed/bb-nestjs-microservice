@@ -2,8 +2,12 @@ import { OneSignalServices } from './utils/send.notif';
 
 import { GroupDto } from './models/group.dto';
 
-import { Administration, Token } from './models/users.model';
-import { Activity, CreateActivityDTO } from './models/acitivites.model';
+import { Administration, Token, Feedback } from './models/users.model';
+import {
+  Activity,
+  CreateActivityDTO,
+  UsersActivities,
+} from './models/acitivites.model';
 import {
   GET_USER_ACITIVITES,
   NEW_GROUP,
@@ -28,6 +32,7 @@ import {
   GET_GROUPS,
   GET_ONE_GROUP,
   EDIT_GROUP,
+  POST_FEEDBACK,
 } from './utils/constantes';
 import { EmailService } from './user.mail.config.services';
 import { JwtService } from '@nestjs/jwt';
@@ -40,6 +45,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnauthorizedException,
@@ -50,6 +56,7 @@ import { User } from 'src/models/users.model';
 import {
   adminDto,
   ConfirmEmailToUpadatePasswordDto,
+  FeedbackDto,
   inscriptionDto,
 } from './models/users.dto';
 import { TokenAnalyse } from './analyse.token';
@@ -65,6 +72,7 @@ export class UsersService {
 
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
+    @InjectModel(Feedback.name) private readonly feedModel: Model<Feedback>,
     @InjectModel(Administration.name)
     private readonly adminModel: Model<Administration>,
     // private schedulerRegistry: SchedulerRegistry,
@@ -174,7 +182,7 @@ export class UsersService {
 
           return newUser;
         } catch (e) {
-          return new ConflictException(e);
+          return new InternalServerErrorException(e);
         }
       }
     } catch (e) {
@@ -207,16 +215,63 @@ export class UsersService {
     try {
       this.tokenAnalyser.isValidToken(token);
       const currentUser = this.jwt.decode(token) as Token;
+      console.log(currentUser);
       const { usersActivities } = await this.userModel.findOne({
         _id: currentUser._id,
       });
-      return {
-        usersActivities,
-      };
+      return usersActivities;
     } catch (e) {
-      return {
-        error: 'invalid',
-      };
+      return e;
+    }
+  }
+
+  async getActivityFeedbackByUserIdService(token: string) {
+    try {
+      this.tokenAnalyser.isValidToken(token);
+      const currentUser = this.jwt.decode(token) as Token;
+      return await this.feedModel.find({ id_user: currentUser._id });
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+
+  async getActivityFeedbacksService(token: string) {
+    try {
+      this.tokenAnalyser.isValidToken(token);
+      return await this.feedModel.find({});
+    } catch (e) {
+      return new UnauthorizedException();
+    }
+  }
+  async postActivityFeedbackService(token: string, feedback: FeedbackDto) {
+    try {
+      this.tokenAnalyser.isValidToken(token);
+      const currentUser = this.jwt.decode(token) as Token;
+      if (currentUser.role == privilege.MEMEBER) {
+        const currentFeedback = await this.feedModel.findOne({
+          id_user: feedback.id_user,
+        });
+        if (currentFeedback) {
+          return { message: 'this feedback is already exist!' };
+        } else {
+          const feed = await this.feedModel.create({
+            id_activity: feedback.id_activity,
+            id_user: currentUser._id,
+            id_week: feedback.id_week,
+            level: feedback.level,
+            rating: feedback.rating,
+            reactions: feedback.reactions,
+          });
+          this.service.emitThisDataToMicroService(
+            POST_FEEDBACK,
+            feed,
+            ACTIVITIES,
+          );
+          return { message: 'feedback has been sent' };
+        }
+      }
+    } catch (e) {
+      return new InternalServerErrorException(e);
     }
   }
   async userByToken(token: string) {
@@ -290,7 +345,9 @@ export class UsersService {
       if (!(attributes.password == undefined)) {
         // if password existe :
         try {
+          console.log(usr._id);
           const user = await this.userModel.findById({ _id: usr._id });
+
           if (user.ableToChangePassword == true) {
             await this.userModel.findOneAndUpdate(
               { _id: usr._id },
@@ -602,11 +659,7 @@ export class UsersService {
     const previ = await this.onUserAnalyse(payload.token);
     const decoded = this.jwt.decode(payload.token);
     const user = decoded as Token;
-    console.log('gggggggggg ' + user._id);
-    console.log('gggggggggg ' + user.role);
-
     if (user.role == privilege.MEMEBER) {
-      console.log('ffffffffffff');
       return this.service.sendThisDataToMicroService(
         NEW_QUESTION,
         {
@@ -636,20 +689,8 @@ export class UsersService {
         );
       }
     }
-
-    // export class QuestionDto {
-    //   content: string;
-    //   answer: string;
-    //   createdby: string;
-    //   requested: string;
-    //   media: string;
-    // }
   }
-  // answerQuestionService(payload: { token: string;
-  //   id_question: string;
-  //   answer: string;}){
 
-  //   };
   //!------------------------------------------[here]5
   async getAllQuestionsService({ token, abc }) {
     const decoded = this.jwt.decode(token);

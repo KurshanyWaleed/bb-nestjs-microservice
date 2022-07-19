@@ -21,17 +21,12 @@ export enum privilege {
 }
 export enum level {
   EASY = 'EASY',
-  MEDIUM = 'MEDIUM',
-  HARD = 'HARD',
+  MODERATE = 'MODERATE',
+  WITH_EFFORT = 'WITH_EFFORT',
 }
-// registerEnumType(Situation, {
-//   name: 'Situation',
-// });
 
-// registerEnumType(UserType, {
-//   name: 'UserType',
-// });
-
-// registerEnumType(BabyGender, {
-//   name: 'BabyGender',
-// });
+export enum rating {
+  NORMAL = 'NORMAL',
+  NICE = 'NICE',
+  VERY_GREAT = 'VERY_GREAT',
+}

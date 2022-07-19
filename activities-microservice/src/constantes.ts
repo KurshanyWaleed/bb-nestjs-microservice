@@ -9,7 +9,7 @@ export const USERS_MS_PORT = 5001;
 export const USERS_SERVER = null;
 export const NEW_ACTIVITY = { cmd: 'NEW_ACTIVITY', role: 'admin' };
 export const UPDATE_ACTIVITY = { cmd: 'UPDATE_ACTIVITY', role: 'admin' };
-
+export const GET_FEEDBACK_BY_ID = { cmd: 'GET_FEEDBACK_BY_ID', role: 'membre' };
 export const CREATE_INFORMATION = { cmd: 'CREATE_INFORMATION', role: 'admin' };
 export const DELETE_INFORMATION = { cmd: 'DELETE_INFORMATION', role: 'admin' };
 export const GET_ONE_INFORMATION = {
@@ -20,6 +20,7 @@ export const GET_INFORMATIONS = {
   cmd: 'GET_INFORMATIONS',
   role: 'admin/member',
 };
+export const POST_FEEDBACK = { cmd: 'POST_FEEDBACK', role: 'membre' };
 export const EDIT_INFORMATION = { cmd: 'EDIT_INFORMATION', role: 'admin' };
 
 export const API_GATEWAY_SERVER = 3000;

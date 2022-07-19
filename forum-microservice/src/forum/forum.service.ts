@@ -96,9 +96,7 @@ export class ForumService {
   async getOneGroupService(group_id: string) {
     console.log(group_id);
     try {
-      const group = await this.groupModel
-        .findById({ _id: group_id })
-        .populate('members');
+      const group = await this.groupModel.findById({ _id: group_id });
 
       return group;
     } catch (e) {

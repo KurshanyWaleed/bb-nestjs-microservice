@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { level, rating } from './enum';
+
 export const AFTER_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
   {
     week: { type: String },
@@ -9,8 +10,6 @@ export const AFTER_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
           title: { type: String },
           description: { type: String },
           media: { type: String },
-          level: { type: String, enuml: level, default: level.EASY },
-          isDone: { type: Boolean, default: false },
         },
       ],
     },
@@ -22,9 +21,6 @@ export const ACTIVITIES_SCHEMA = new mongoose.Schema(
     title: { type: String },
     description: { type: String },
     media: { type: String },
-    level: { type: String, enum: level, default: level.EASY },
-    isDone: { type: Boolean, default: false },
-    rating: { type: String, enum: rating, default: rating.NICE },
   },
 
   { timestamps: true },
@@ -38,8 +34,6 @@ export const BEFORE_BORN_ACTIVITIES_SCHEMA = new mongoose.Schema(
           title: { type: String },
           description: { type: String },
           media: { type: String },
-          level: { type: String, enum: level, default: level.EASY },
-          isDone: { type: Boolean, default: false },
         },
       ],
     },
@@ -69,10 +63,17 @@ export class WeekDTO {
       description: string;
       media: string;
       level: level;
-      isDone: boolean;
+      rating: rating;
+      feedback: [
+        {
+          _id_user: string;
+          level: level;
+          reactions: string;
+          rating: rating;
+        },
+      ];
     },
   ];
-  media: string;
 }
 export class Activity {
   _id: string;
@@ -80,7 +81,6 @@ export class Activity {
   description: string;
   media: string;
   level: level;
-  isDone: boolean;
 }
 export class CreateActivityDTO {
   title: string;

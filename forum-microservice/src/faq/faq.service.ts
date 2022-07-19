@@ -53,6 +53,7 @@ export class FaqService {
     }
   }
   async GetAllQuestionsService(role: string, abc: string) {
+    console.log(role);
     switch (role) {
       case privilege.SUPERADMIN:
         return await this.questionModel.find();
@@ -67,7 +68,7 @@ export class FaqService {
             abc.toLocaleLowerCase()
           );
         });
-
+        console.log(val);
         return val;
       default:
         return { message: 'something wont wrong' };

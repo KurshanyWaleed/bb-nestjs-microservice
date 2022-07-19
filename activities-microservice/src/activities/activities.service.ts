@@ -157,7 +157,10 @@ export class ActivitiesService {
           );
         });
 
-        return { message: 'the new Activitie has been added sucsessfuly' };
+        return {
+          message: 'the new Activity has been added sucsessfuly',
+          statusCode: 201,
+        };
       } else {
         const { title, description, media, level } = activity;
         activity.week.map(async (date) => {

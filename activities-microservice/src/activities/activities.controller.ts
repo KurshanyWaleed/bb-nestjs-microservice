@@ -2,6 +2,7 @@ import {
   CREATE_ACTIVITIES,
   GET_ACTIVITIES_OF_WEEK,
   NEW_ACTIVITY,
+  POST_FEEDBACK,
   UPDATE_ACTIVITY,
 } from './../constantes';
 import { CronService } from './cron.service';
@@ -53,5 +54,10 @@ export class ActivitiesController {
     this.logger.debug(payload.last_week_activities);
     const newPayload = this.activityService.handelIncomminData(payload);
     return newPayload;
+  }
+
+  @MessagePattern(POST_FEEDBACK)
+  postFeedBack(feed: any) {
+    console.log(feed);
   }
 }

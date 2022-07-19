@@ -1,3 +1,4 @@
+import { level, rating } from './../utils/enum';
 import { IsEmail, IsEmpty, IsNotEmpty, Length } from 'class-validator';
 import { babyGender, privilege, situation, userType } from 'src/utils/enum';
 
@@ -11,6 +12,14 @@ export class adminDto {
   privilege: privilege;
 }
 
+export class FeedbackDto {
+  id_week: string;
+  id_activity: string;
+  id_user: string;
+  reactions: string;
+  level: level;
+  rating: rating;
+}
 export class UserToken {
   userName: string;
   _id: string;

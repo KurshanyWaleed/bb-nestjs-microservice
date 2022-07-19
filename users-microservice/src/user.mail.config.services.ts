@@ -11,7 +11,7 @@ export class EmailService {
 
   async sendEmail(email: string, token: string) {
     await this.mailerService.sendMail({
-      from: 'kurshany.waleed@gmail.com',
+      from: 'waleed.de@gmail.com',
       to: email,
       subject: 'Greeting from BabyBraino | Account Confirmation ',
       html: emailTemplateConfirmAcount(token),
@@ -23,7 +23,7 @@ export class EmailService {
     console.log(email);
     try {
       await this.mailerService.sendMail({
-        from: 'kurshany.waleed@gmail.com',
+        from: 'waleed.de@gmail.com',
         to: email,
         subject: 'Greeting from BabyBraino | Forgetten Password ',
 

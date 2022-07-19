@@ -1,6 +1,6 @@
 import { ServiceSender } from './service.sender';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { adminDto } from './../models/users.dto';
+import { adminDto, FeedbackDto } from './../models/users.dto';
 import { map, Observable } from 'rxjs';
 import { Activity, CreateActivityDTO, User } from 'src/models/users.model';
 import { Request } from 'express';
@@ -49,6 +49,9 @@ import {
   GET_GROUPS,
   GET_ONE_GROUP,
   EDIT_GROUP,
+  POST_FEEDBACK,
+  GET_FEEDBACK,
+  GET_FEEDBACK_BY_ID,
 } from './../utils/constantes';
 
 @Injectable()
@@ -113,6 +116,30 @@ export class UsersService {
       USERS,
     );
   }
+  //todo----------------------
+
+  onComplateActivityService(req: Request, feedback: FeedbackDto) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    console.log(token);
+    return this.service.sendThisDataToMicroService(
+      POST_FEEDBACK,
+      { token, feedback },
+      USERS,
+    );
+  }
+  getFeedbacksService(req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    return this.service.sendThisDataToMicroService(GET_FEEDBACK, token, USERS);
+  }
+  getFeedbackByIdService(req: Request) {
+    const token = req.headers.authorization.split(ESPACE)[1];
+    return this.service.sendThisDataToMicroService(
+      GET_FEEDBACK_BY_ID,
+      token,
+      USERS,
+    );
+  }
+  //
 
   signInservice(data: LogInDto) {
     console.log(data);
@@ -167,8 +194,9 @@ export class UsersService {
   updatePassService(token: string, password: any) {
     const payload = {
       token,
-      password: password,
+      password,
     };
+    console.log(password);
     return this.service.sendThisDataToMicroService(
       UPDATE_PASS_DATA,
       payload,

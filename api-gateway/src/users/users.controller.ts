@@ -2,7 +2,7 @@ import { ESPACE, local_BASE_URL_USERS } from './../utils/constantes';
 import { BabyGenderPipe, StatusPipe } from 'src/pipes/customPipes';
 import { JwtAuthGuard } from './guards/auth.guard';
 
-import { adminDto, inscriptionDto } from 'src/models/users.dto';
+import { adminDto, FeedbackDto, inscriptionDto } from 'src/models/users.dto';
 import { UsersService } from './users.service';
 import { Request, Response } from 'express';
 import {
@@ -54,6 +54,22 @@ export class UsersController {
   @Get('list-activities')
   getUserActivities(@Req() req: Request) {
     return this.userServices.getUserActivitiesService(req);
+  }
+
+  @Post('feedback')
+  onComplateActivityController(
+    @Req() req: Request,
+    @Body() feedback: FeedbackDto,
+  ) {
+    return this.userServices.onComplateActivityService(req, feedback);
+  }
+  @Get('feedbacks')
+  getFeedbacksController(@Req() req: Request) {
+    return this.userServices.getFeedbacksService(req);
+  }
+  @Get('feedbacks/me')
+  getFeedbackbyIdController(@Req() req: Request) {
+    return this.userServices.getFeedbackByIdService(req);
   }
   //todo  : ------Update User Infos-----------------------------*->
   @Put('update')

@@ -1,4 +1,9 @@
-import { Administration, AdministrationSchema } from './models/users.model';
+import {
+  Administration,
+  AdministrationSchema,
+  Feedback,
+  FEEDBACK_SCHEMA,
+} from './models/users.model';
 import { AuthModule } from './auth/auth.module';
 import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -41,15 +46,18 @@ import { CronService } from './cron.service';
     ConfigModule.forRoot({ isGlobal: true }),
     forwardRef(() => AuthModule),
     MailerModule.forRootAsync({
-      useFactory: async (config: ConfigService) => ({
-        transport: {
-          service: 'gmail',
-          auth: {
-            user: config.get<string>('EMAIL'),
-            pass: config.get('PASS'),
+      useFactory: async (config: ConfigService) => {
+        console.log(config.get<string>('EMAIL'));
+        return {
+          transport: {
+            service: 'gmail',
+            auth: {
+              user: config.get<string>('EMAIL'),
+              pass: config.get('PASS'),
+            },
           },
-        },
-      }),
+        };
+      },
       inject: [ConfigService],
     }),
     JwtModule.registerAsync({
@@ -69,6 +77,10 @@ import { CronService } from './cron.service';
     }),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
+      {
+        name: Feedback.name,
+        schema: FEEDBACK_SCHEMA,
+      },
       { name: Administration.name, schema: AdministrationSchema },
     ]),
     ClientsModule.register([

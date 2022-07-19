@@ -60,10 +60,12 @@ export const GET_USER_ACITIVITES = {
   cmd: 'GET_USER_ACITIVITES',
   role: 'MSUser',
 };
+export const GET_FEEDBACK_BY_ID = { cmd: 'GET_FEEDBACK_BY_ID', role: 'membre' };
 export const USER_VERIFY = { cmd: 'ANALYSER', role: '' };
 export const NEW_GROUP = { cmd: 'ADD_NEW_GROUP', role: 'user/admin' };
 export const ACTIVITIES_OF_WEEK = 'ACTIVITIES_OF_WEEK';
-
+export const POST_FEEDBACK = { cmd: 'POST_FEEDBACK', role: 'membre' };
+export const GET_FEEDBACK = { cmd: 'GET_FEEDBACK', role: 'membre' };
 export const CREATE_INFORMATION = { cmd: 'CREATE_INFORMATION', role: 'admin' };
 export const DELETE_INFORMATION = { cmd: 'DELETE_INFORMATION', role: 'admin' };
 export const GET_ONE_INFORMATION = {
